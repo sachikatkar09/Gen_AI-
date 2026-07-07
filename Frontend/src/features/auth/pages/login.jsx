@@ -9,11 +9,14 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleLogin({ email, password });
-    navigate("/");
+    setError("");
+    const success = await handleLogin({ email, password });
+    if (success) navigate("/");
+    else setError("Login failed. Please check your credentials and try again.");
   };
 
   if (loading) {
@@ -29,6 +32,7 @@ const Login = () => {
       <div className="form-container">
         <h1>Login</h1>
         <form onSubmit={handleSubmit}>
+          {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
           <div className="input-group">
             <label htmlFor="email">Email</label>
             <input

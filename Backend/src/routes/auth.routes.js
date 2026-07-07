@@ -1,9 +1,8 @@
 const { Router } = require("express");
-
-const authRouter = Router();
-
 const authController = require("../controllers/auth.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
+
+const authRouter = Router();
 
 /**
  * @route POST /api/auth/register

@@ -7,13 +7,17 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const { loading, handleRegister } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleRegister({ username, email, password });
-    navigate("/");
+    setError("");
+    const success = await handleRegister({ username, email, password });
+    if (success) navigate("/");
+    else
+      setError("Registration failed. Please check your details and try again.");
   };
 
   if (loading) {
@@ -30,9 +34,12 @@ const Register = () => {
         <h1>Register</h1>
 
         <form onSubmit={handleSubmit}>
+          {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
+
           <div className="input-group">
             <label htmlFor="username">Username</label>
             <input
+              value={username}
               onChange={(e) => {
                 setUsername(e.target.value);
               }}
@@ -40,11 +47,13 @@ const Register = () => {
               id="username"
               name="username"
               placeholder="Enter username"
+              required
             />
           </div>
           <div className="input-group">
             <label htmlFor="email">Email</label>
             <input
+              value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
@@ -52,11 +61,13 @@ const Register = () => {
               id="email"
               name="email"
               placeholder="Enter email address"
+              required
             />
           </div>
           <div className="input-group">
             <label htmlFor="password">Password</label>
             <input
+              value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
@@ -64,6 +75,7 @@ const Register = () => {
               id="password"
               name="password"
               placeholder="Enter password"
+              required
             />
           </div>
 
