@@ -14,10 +14,9 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    const success = await handleRegister({ username, email, password });
-    if (success) navigate("/");
-    else
-      setError("Registration failed. Please check your details and try again.");
+    const result = await handleRegister({ username, email, password });
+    if (result.success) navigate("/");
+    else setError(result.error || "Registration failed. Please check your details and try again.");
   };
 
   if (loading) {

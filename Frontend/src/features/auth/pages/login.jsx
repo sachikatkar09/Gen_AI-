@@ -14,9 +14,9 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    const success = await handleLogin({ email, password });
-    if (success) navigate("/");
-    else setError("Login failed. Please check your credentials and try again.");
+    const result = await handleLogin({ email, password });
+    if (result.success) navigate("/");
+    else setError(result.error || "Login failed. Please check your credentials and try again.");
   };
 
   if (loading) {

@@ -11,13 +11,13 @@ export const useAuth = () => {
     try {
       const data = await login({ email, password });
       if (data) {
-        setUser(data.user);
-        return true;
+        await setUser(data.user);
+        return { success: true };
       }
-      return false;
+      return { success: false, error: "Login failed" };
     } catch (err) {
-      console.error(err.message);
-      return false;
+      console.error(err?.message || "Login failed");
+      return { success: false, error: err?.message || "Login failed" };
     } finally {
       setLoading(false);
     }
@@ -29,12 +29,12 @@ export const useAuth = () => {
       const data = await register({ username, email, password });
       if (data) {
         setUser(data.user);
-        return true;
+        return { success: true };
       }
-      return false;
+      return { success: false, error: "Registration failed" };
     } catch (err) {
       console.error(err?.message || "Registration failed");
-      return false;
+      return { success: false, error: err?.message || "Registration failed" };
     } finally {
       setLoading(false);
     }
