@@ -1,0 +1,17 @@
+{
+  "name": "gen_ai_fullstack",
+  "version": "1.0.0",
+  "description": "Full-stack Gen AI project with React frontend and Express backend",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && cd Frontend && npm install && cd ../Backend && npm install",
+    "dev": "concurrently \"npm run dev --prefix Frontend\" \"npm run dev --prefix Backend\" \"npm run open\"",
+    "open": "start http://localhost:5173",
+    "build": "npm run build --prefix Frontend && cd ../Backend && npm run build",
+    "start": "node Backend/server.js"
+  },
+  "dependencies": {
+    "concurrently": "^9.0.0",
+    "open": "^10.0.0"
+  }
+}
