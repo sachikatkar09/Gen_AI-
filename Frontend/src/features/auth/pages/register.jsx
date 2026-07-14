@@ -15,7 +15,7 @@ const Register = () => {
     e.preventDefault();
     setError("");
     const result = await handleRegister({ username, email, password });
-    if (result.success) navigate("/");
+    if (result.success) navigate("/dashboard");
     else setError(result.error || "Registration failed. Please check your details and try again.");
   };
 

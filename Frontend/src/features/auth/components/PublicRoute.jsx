@@ -2,7 +2,7 @@ import { useAuth } from "../hooks/useAuth";
 import { Navigate } from "react-router";
 
 
-const Protected = ({ children }) => {
+const PublicRoute = ({ children }) => {
   const { loading, user } = useAuth();
 
   if (loading) {
@@ -13,11 +13,12 @@ const Protected = ({ children }) => {
     );
   }
 
-  if (!user) {
-    return <Navigate to={"/login"} />;
+  // If user is already logged in, redirect to dashboard
+  if (user) {
+    return <Navigate to={"/dashboard"} />;
   }
 
   return children;
 };
 
-export default Protected;
+export default PublicRoute;
