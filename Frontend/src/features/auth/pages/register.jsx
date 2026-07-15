@@ -8,6 +8,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const { loading, handleRegister } = useAuth();
 
@@ -28,62 +29,94 @@ const Register = () => {
   }
 
   return (
-    <main>
-      <div className="form-container">
-        <h1>Register</h1>
-
-        <form onSubmit={handleSubmit}>
-          {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
-
-          <div className="input-group">
-            <label htmlFor="username">Username</label>
-            <input
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
-              type="text"
-              id="username"
-              name="username"
-              placeholder="Enter username"
-              required
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="email">Email</label>
-            <input
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter email address"
-              required
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="password">Password</label>
-            <input
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter password"
-              required
-            />
+    <main className="auth-page">
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <div className="auth-logo">👤</div>
+            <h1 className="auth-title">Create your account</h1>
+            <p className="auth-subtitle">Start your interview journey today.</p>
           </div>
 
-          <button className="button primary-button">Register</button>
-        </form>
+          <form onSubmit={handleSubmit} className="auth-form">
+            {error && <div className="auth-error">{error}</div>}
 
-        <p>
-          Already have an account? <Link to={"/login"}>Login</Link>{" "}
-        </p>
+            <div className="auth-input-group">
+              <label htmlFor="username" className="auth-label">Username</label>
+              <div className="auth-input-wrapper">
+                <span className="auth-input-icon">👤</span>
+                <input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  type="text"
+                  id="username"
+                  name="username"
+                  placeholder="Enter your username"
+                  className="auth-input"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="auth-input-group">
+              <label htmlFor="email" className="auth-label">Email</label>
+              <div className="auth-input-wrapper">
+                <span className="auth-input-icon">✉️</span>
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  className="auth-input"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="auth-input-group">
+              <label htmlFor="password" className="auth-label">Password</label>
+              <div className="auth-input-wrapper">
+                <span className="auth-input-icon">🔒</span>
+                <input
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  className="auth-input"
+                  required
+                />
+                <button
+                  type="button"
+                  className="auth-password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" className="auth-button auth-button--primary">
+              Register
+            </button>
+
+            <div className="auth-divider">
+              <span>OR</span>
+            </div>
+
+            <button type="button" className="auth-button auth-button--google">
+              <span className="auth-button-icon">🔵</span>
+              Continue with Google
+            </button>
+          </form>
+
+          <div className="auth-footer">
+            <p>Already have an account? <Link to="/login" className="auth-link auth-link--highlight">Login</Link></p>
+          </div>
+        </div>
       </div>
     </main>
   );

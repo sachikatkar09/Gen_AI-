@@ -10,6 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,40 +29,79 @@ const Login = () => {
   }
 
   return (
-    <main>
-      <div className="form-container">
-        <h1>Login</h1>
-        <form onSubmit={handleSubmit}>
-          {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
-          <div className="input-group">
-            <label htmlFor="email">Email</label>
-            <input
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter email address"
-            />
+    <main className="auth-page">
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <div className="auth-logo">👤</div>
+            <h1 className="auth-title">Welcome Back 👋</h1>
+            <p className="auth-subtitle">Continue your interview preparation.</p>
           </div>
-          <div className="input-group">
-            <label htmlFor="password">Password</label>
-            <input
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter password"
-            />
+
+          <form onSubmit={handleSubmit} className="auth-form">
+            {error && <div className="auth-error">{error}</div>}
+
+            <div className="auth-input-group">
+              <label htmlFor="email" className="auth-label">Email</label>
+              <div className="auth-input-wrapper">
+                <span className="auth-input-icon">✉️</span>
+                <input
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  className="auth-input"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="auth-input-group">
+              <label htmlFor="password" className="auth-label">Password</label>
+              <div className="auth-input-wrapper">
+                <span className="auth-input-icon">🔒</span>
+                <input
+                  onChange={(e) => setPassword(e.target.value)}
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  className="auth-input"
+                  required
+                />
+                <button
+                  type="button"
+                  className="auth-password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                </button>
+              </div>
+            </div>
+
+            <div className="auth-forgot-password">
+              <Link to="/forgot-password" className="auth-link">Forgot Password?</Link>
+            </div>
+
+            <button type="submit" className="auth-button auth-button--primary">
+              Login
+            </button>
+
+            <div className="auth-divider">
+              <span>OR</span>
+            </div>
+
+            <button type="button" className="auth-button auth-button--google">
+              <span className="auth-button-icon">🔵</span>
+              Continue with Google
+            </button>
+          </form>
+
+          <div className="auth-footer">
+            <p>Don't have an account? <Link to="/register" className="auth-link auth-link--highlight">Register</Link></p>
           </div>
-          <button className="button primary-button">Login</button>
-        </form>
-        <p>
-          Don't have an account? <Link to={"/register"}>Register</Link>{" "}
-        </p>
+        </div>
       </div>
     </main>
   );
