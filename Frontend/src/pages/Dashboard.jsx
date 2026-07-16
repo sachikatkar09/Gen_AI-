@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import "../styles/dashboard.scss";
 import { useInterview } from "../features/interview/hooks/useInterview.js";
 import { useNavigate } from "react-router";
@@ -7,6 +7,7 @@ const Dashboard = () => {
   const { loading, generateReport, reports } = useInterview();
   const [jobDescription, setJobDescription] = useState("");
   const [selfDescription, setSelfDescription] = useState("");
+  const [resumeFileName, setResumeFileName] = useState("");
   const resumeInputRef = useRef();
 
   const navigate = useNavigate();
@@ -21,9 +22,15 @@ const Dashboard = () => {
     navigate(`/interview/${data._id}`);
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) setResumeFileName(file.name);
+  };
+
   if (loading) {
     return (
       <main className="loading-screen">
+        <div className="spinner"></div>
         <h1>Loading your interview plan...</h1>
       </main>
     );
@@ -120,16 +127,51 @@ const Dashboard = () => {
             </div>
 
             <div className="profile-section">
-              <label htmlFor="resume" className="panel__label">
+              <label className="panel__label">
                 Upload Your Resume
               </label>
-              <input
-                id="resume"
-                ref={resumeInputRef}
-                type="file"
-                accept=".pdf,.doc,.docx,.txt"
-                className="panel__file-input"
-              />
+              <label
+                className={`upload-box ${resumeFileName ? "upload-box--uploaded" : ""}`}
+                htmlFor="resume"
+              >
+                {resumeFileName ? (
+                  <div className="upload-success">
+                    <span className="upload-success__icon">&#10003;</span>
+                    <span className="upload-success__name">{resumeFileName}</span>
+                  </div>
+                ) : (
+                  <>
+                    <span className="upload-box__icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="16 16 12 12 8 16" />
+                        <line x1="12" y1="12" x2="12" y2="21" />
+                        <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                      </svg>
+                    </span>
+                    <p className="upload-box__text">Drag & Drop your file here</p>
+                    <p className="upload-box__subtext">or <strong>Browse File</strong></p>
+                    <p className="upload-box__formats">PDF &bull; DOC &bull; DOCX</p>
+                  </>
+                )}
+                <input
+                  id="resume"
+                  ref={resumeInputRef}
+                  type="file"
+                  accept=".pdf,.doc,.docx,.txt"
+                  className="panel__file-input"
+                  onChange={handleFileChange}
+                />
+              </label>
             </div>
           </div>
         </div>

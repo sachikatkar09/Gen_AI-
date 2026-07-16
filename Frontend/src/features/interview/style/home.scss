@@ -1,91 +1,166 @@
 // ── Variables ────────────────────────────────────────────────────────────────
 @use "sass:color";
 
-$bg-page: #0d1117;
-$bg-card: #161b22;
-$bg-panel: #1c2230;
-$bg-input: #1e2535;
-$border-color: #2a3348;
-$text-primary: #e6edf3;
-$text-muted: #7d8590;
-$accent: #ff2d78;
+$bg-page: #0F172A;
+$bg-card: #111827;
+$bg-panel: #1a2332;
+$bg-input: #1F2937;
+$border-color: #1F2937;
+$border-hover: #374151;
+$text-primary: #F9FAFB;
+$text-muted: #9CA3AF;
+$accent: #FF2E72;
 $accent-alt: #ff6b9d;
-$badge-required: #ff2d78;
-$badge-best: #ff2d78;
-$info-bg: #1b2a4a;
-$info-border: #2d4a7a;
-$font-stack:
-  system-ui,
-  -apple-system,
-  BlinkMacSystemFont,
-  "Segoe UI",
-  Roboto,
-  sans-serif;
+$secondary: #7C3AED;
+$badge-required: #FF2E72;
+$badge-best: #FF2E72;
+$info-bg: rgba(#7C3AED, 0.1);
+$info-border: rgba(#7C3AED, 0.2);
+$font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+// ── Animations ────────────────────────────────────────────────────────────────
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 // ── Page Shell ───────────────────────────────────────────────────────────────
 .home-page {
   width: 100%;
   min-height: 100vh;
-  background-color: $bg-page;
+  background: linear-gradient(135deg, #0F172A 0%, #1a1040 50%, #0F172A 100%);
   color: $text-primary;
   font-family: $font-stack;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 3rem 1.5rem;
-  gap: 2rem;
+  gap: 2.5rem;
+  overflow-x: hidden;
+
+  &::before {
+    content: "";
+    position: fixed;
+    top: -200px;
+    right: -200px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba($accent, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &::after {
+    content: "";
+    position: fixed;
+    bottom: -200px;
+    left: -200px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba($secondary, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 // ── Page Header ──────────────────────────────────────────────────────────────
 .page-header {
   text-align: center;
+  animation: fadeInUp 0.6s ease-out both;
 
   h1 {
-    font-size: 2.25rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
     color: $text-primary;
+    letter-spacing: -0.5px;
+
+    @media (max-width: 768px) {
+      font-size: 1.75rem;
+    }
   }
 
   p {
     color: $text-muted;
-    font-size: 0.95rem;
-    max-width: 480px;
+    font-size: 1rem;
+    max-width: 520px;
     margin: 0 auto;
-    line-height: 1.6;
+    line-height: 1.7;
   }
 
   .highlight {
-    color: $accent;
+    background: linear-gradient(135deg, $accent, $secondary);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }
 
 // ── Main Card ─────────────────────────────────────────────────────────────────
 .interview-card {
   width: 100%;
-  max-width: 900px;
-  background-color: $bg-card;
-  border: 1px solid $border-color;
-  border-radius: 1rem;
+  max-width: 960px;
+  background: rgba($bg-card, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
   overflow: hidden;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 20px 50px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  animation: fadeInUp 0.6s ease-out 0.15s both;
 
   &__body {
     display: flex;
     min-height: 520px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      min-height: auto;
+    }
   }
 
   &__footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.5rem;
-    border-top: 1px solid $border-color;
+    padding: 1.25rem 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.25rem;
+    }
 
     .footer-info {
       font-size: 0.8rem;
       color: $text-muted;
+      letter-spacing: 0.02em;
     }
   }
 }
@@ -93,63 +168,87 @@ $font-stack:
 // ── Panels ────────────────────────────────────────────────────────────────────
 .panel-divider {
   width: 1px;
-  background-color: $border-color;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.08), transparent);
   flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  }
 }
 
 .panel {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1.5rem;
+  gap: 1.25rem;
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+  }
 
   &__header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     margin-bottom: 0.25rem;
 
     h2 {
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 600;
       color: $text-primary;
       flex: 1;
+      letter-spacing: -0.2px;
     }
   }
 
   &__icon {
     display: flex;
     align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba($accent, 0.12);
+    border-radius: 8px;
     color: $accent;
+    flex-shrink: 0;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 
   &__textarea {
     flex: 1;
     width: 100%;
-    background-color: $bg-input;
-    border: 1px solid $border-color;
-    border-radius: 0.5rem;
-    padding: 0.75rem 1rem;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
     color: $text-primary;
     font-family: $font-stack;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     resize: none;
     outline: none;
-    transition: border-color 0.2s;
-    line-height: 1.5;
+    transition: all 0.3s ease;
+    line-height: 1.6;
 
     &::placeholder {
-      color: $text-muted;
+      color: rgba($text-muted, 0.6);
     }
 
     &:focus {
-      border-color: $accent;
+      border-color: rgba($accent, 0.5);
+      box-shadow: 0 0 0 3px rgba($accent, 0.08), 0 0 20px rgba($accent, 0.05);
+      background-color: rgba(255, 255, 255, 0.04);
     }
 
     &--short {
       flex: unset;
-      height: 96px;
+      height: 100px;
     }
   }
 
@@ -158,37 +257,50 @@ $font-stack:
 
     .char-counter {
       position: absolute;
-      bottom: 2.25rem;
-      right: 2rem;
-      font-size: 0.75rem;
-      color: $text-muted;
+      bottom: 2.5rem;
+      right: 2.5rem;
+      font-size: 0.7rem;
+      color: rgba($text-muted, 0.5);
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      background: rgba($bg-card, 0.8);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+
+      @media (max-width: 768px) {
+        position: static;
+        text-align: right;
+        margin-top: -0.5rem;
+        background: none;
+        padding: 0;
+      }
     }
   }
 
   &--right {
-    gap: 0.75rem;
+    gap: 1rem;
   }
 }
 
 // ── Badges ────────────────────────────────────────────────────────────────────
 .badge {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 600;
-  padding: 0.15rem 0.5rem;
-  border-radius: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
 
   &--required {
-    background-color: rgba($badge-required, 0.15);
+    background-color: rgba($badge-required, 0.12);
     color: $badge-required;
-    border: 1px solid rgba($badge-required, 0.3);
+    border: 1px solid rgba($badge-required, 0.2);
   }
 
   &--best {
-    background-color: rgba($badge-best, 0.15);
-    color: $badge-best;
-    border: 1px solid rgba($badge-best, 0.3);
+    background-color: rgba($secondary, 0.12);
+    color: $secondary;
+    border: 1px solid rgba($secondary, 0.2);
   }
 }
 
@@ -197,9 +309,9 @@ $font-stack:
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 500;
-  color: $text-primary;
+  color: rgba($text-primary, 0.85);
   margin-bottom: 0.25rem;
 }
 
@@ -215,24 +327,28 @@ $font-stack:
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
-  padding: 1.5rem 1rem;
-  background-color: $bg-input;
-  border: 2px dashed $border-color;
-  border-radius: 0.6rem;
+  gap: 0.5rem;
+  padding: 1.75rem 1rem;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
   cursor: pointer;
-  transition:
-    border-color 0.2s,
-    background-color 0.2s;
+  transition: all 0.3s ease;
 
   &:hover {
-    border-color: $accent;
-    background-color: rgba($accent, 0.05);
+    border-color: rgba($accent, 0.4);
+    background-color: rgba($accent, 0.04);
   }
 
   &__icon {
     color: $accent;
     margin-bottom: 0.25rem;
+    opacity: 0.8;
+
+    svg {
+      width: 32px;
+      height: 32px;
+    }
   }
 
   &__title {
@@ -244,7 +360,7 @@ $font-stack:
 
   &__subtitle {
     font-size: 0.75rem;
-    color: $text-muted;
+    color: rgba($text-muted, 0.6);
     margin: 0;
   }
 }
@@ -253,16 +369,19 @@ $font-stack:
 .or-divider {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  color: $text-muted;
-  font-size: 0.75rem;
+  gap: 1rem;
+  color: rgba($text-muted, 0.5);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 
   &::before,
   &::after {
     content: "";
     flex: 1;
     height: 1px;
-    background-color: $border-color;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
   }
 
   span {
@@ -281,26 +400,32 @@ $font-stack:
 .info-box {
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
-  padding: 0.75rem 1rem;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
   background-color: $info-bg;
   border: 1px solid $info-border;
-  border-radius: 0.5rem;
+  border-radius: 12px;
 
   &__icon {
     flex-shrink: 0;
-    color: #4a90e2;
+    color: $secondary;
     margin-top: 1px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 
   p {
     margin: 0;
     font-size: 0.8rem;
-    color: #8ab4f8;
-    line-height: 1.5;
+    color: rgba($text-muted, 0.8);
+    line-height: 1.6;
 
     strong {
       color: $text-primary;
+      font-weight: 600;
     }
   }
 }
@@ -309,62 +434,91 @@ $font-stack:
 .generate-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(
-    135deg,
-    $accent 0%,
-    color.adjust($accent, $lightness: -10%) 100%
-  );
+  gap: 0.6rem;
+  padding: 0.875rem 2rem;
+  background: linear-gradient(135deg, $accent 0%, $secondary 100%);
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 600;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 14px;
   cursor: pointer;
-  transition:
-    opacity 0.2s,
-    transform 0.1s;
+  transition: all 0.3s ease;
   font-family: $font-stack;
+  letter-spacing: -0.1px;
+  box-shadow: 0 4px 15px rgba($accent, 0.25);
 
   &:hover {
-    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba($accent, 0.35);
   }
 
   &:active {
-    transform: scale(0.98);
+    transform: translateY(0) scale(0.98);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
   }
 }
 
+// ── Recent Reports ────────────────────────────────────────────────────────────
 .recent-reports {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
   width: 100%;
-  max-width: 900px;
+  max-width: 960px;
+  animation: fadeInUp 0.6s ease-out 0.3s both;
+
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $text-primary;
+  }
 
   .reports-list {
     display: flex;
-    gap: 0.75rem;
+    gap: 1rem;
     flex-wrap: wrap;
 
     .report-item {
-      background-color: $bg-card;
-      border: 1px solid $border-color;
-      border-radius: 0.5rem;
-      padding: 1rem;
+      background: rgba($bg-card, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 1.25rem;
       flex: 1;
+      min-width: 200px;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
       cursor: pointer;
       flex-shrink: 0;
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: rgba($accent, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      h3 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: $text-primary;
+      }
+
+      .report-meta {
+        font-size: 0.8rem;
+        color: $text-muted;
+      }
 
       .match-score {
         font-size: 0.8rem;
         font-weight: 600;
         color: $accent;
-        align-items: flex-start;
       }
     }
   }
@@ -373,16 +527,45 @@ $font-stack:
 // ── Page Footer ───────────────────────────────────────────────────────────────
 .page-footer {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
+  padding: 1rem 0;
 
   a {
     font-size: 0.8rem;
-    color: $text-muted;
+    color: rgba($text-muted, 0.6);
     text-decoration: none;
     transition: color 0.2s;
+    font-weight: 500;
 
     &:hover {
       color: $text-primary;
     }
+  }
+}
+
+// ── Loading Screen ────────────────────────────────────────────────────────────
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0F172A 0%, #1a1040 50%, #0F172A 100%);
+  gap: 1.5rem;
+
+  .spinner {
+    width: 44px;
+    height: 44px;
+    border: 3px solid rgba(255, 255, 255, 0.08);
+    border-top-color: $accent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  h1 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: $text-muted;
+    font-family: $font-stack;
   }
 }

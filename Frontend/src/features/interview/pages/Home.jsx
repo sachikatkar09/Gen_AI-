@@ -24,6 +24,7 @@ const Home = () => {
   if (loading) {
     return (
       <main className="loading-screen">
+        <div className="spinner"></div>
         <h1>Loading your interview plan...</h1>
       </main>
     );
