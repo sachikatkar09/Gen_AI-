@@ -87,15 +87,6 @@ const Login = () => {
             <button type="submit" className="auth-button auth-button--primary">
               Login
             </button>
-
-            <div className="auth-divider">
-              <span>OR</span>
-            </div>
-
-            <button type="button" className="auth-button auth-button--google">
-              <span className="auth-button-icon">🔵</span>
-              Continue with Google
-            </button>
           </form>
 
           <div className="auth-footer">
