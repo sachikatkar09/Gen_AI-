@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/hooks/useAuth.js";
 import "../styles/navbar.scss";
 
@@ -37,8 +37,8 @@ const Navbar = () => {
           {!user ? (
             // Unauthenticated Navigation
             <div className="navbar__nav-items">
-              <a href="#features" className="navbar__link">Features</a>
-              <a href="#about" className="navbar__link">About</a>
+              <NavLink to="/features" className="navbar__link">Features</NavLink>
+              <NavLink to="/about" className="navbar__link">About</NavLink>
               <Link to="/login" className="navbar__link navbar__link--cta">Login</Link>
               <Link to="/register" className="navbar__button navbar__button--primary">
                 Register

@@ -9,6 +9,8 @@ import Resume from "./pages/Resume";
 import MockInterview from "./pages/MockInterview";
 import AIInterview from "./pages/AIInterview";
 import Profile from "./pages/Profile";
+import Features from "./pages/Features";
+import About from "./pages/About";
 import Navbar from "./components/Navbar";
 
 const Layout = ({ children }) => (
@@ -22,6 +24,14 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout><Landing /></Layout>,
+  },
+  {
+    path: "/features",
+    element: <Layout><Features /></Layout>,
+  },
+  {
+    path: "/about",
+    element: <Layout><About /></Layout>,
   },
   {
     path: "/login",
