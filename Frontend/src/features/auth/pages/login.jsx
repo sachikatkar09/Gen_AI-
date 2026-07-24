@@ -1,23 +1,33 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import "../auth.form.scss";
 import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
   const { loading, handleLogin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [redirectMessage, setRedirectMessage] = useState("");
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setRedirectMessage(location.state.message);
+    }
+  }, [location.state]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     const result = await handleLogin({ email, password });
-    if (result.success) navigate("/dashboard");
-    else setError(result.error || "Login failed. Please check your credentials and try again.");
+    if (result.success) {
+      const from = location.state?.from || "/dashboard";
+      navigate(from);
+    } else setError(result.error || "Login failed. Please check your credentials and try again.");
   };
 
   if (loading) {
@@ -39,6 +49,7 @@ const Login = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
+            {redirectMessage && <div className="auth-message">{redirectMessage}</div>}
             {error && <div className="auth-error">{error}</div>}
 
             <div className="auth-input-group">

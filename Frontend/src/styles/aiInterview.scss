@@ -1,0 +1,336 @@
+@use './variables' as *;
+
+// Animations
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Hover lift effect
+.generate-button,
+.record-button,
+.stop-button,
+.evaluate-button,
+.next-button,
+.score-card,
+.summary-card {
+  transition: all 0.3s ease;
+}
+
+generate-button:hover,
+.record-button:hover,
+.stop-button:hover,
+.evaluate-button:hover,
+.next-button:hover,
+.score-card:hover,
+.summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+// Progress bar animation
+.progress-bar {
+  transition: width 0.5s ease;
+}
+
+// Circular progress animation
+.circular-progress {
+  transition: background 0.5s ease;
+}
+
+.ai-interview-container {
+  padding: 2rem;
+  min-height: 100vh;
+  background: $gradient-dark;
+  color: $text-light;
+
+  .upload-details, .ai-questions, .final-result {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  h1, h2, h3 {
+    color: $accent-pink;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: $text-light;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: $text-light;
+      font-family: inherit;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+
+    .form-group {
+      flex: 1;
+    }
+  }
+
+  .generate-button, .record-button, .stop-button, .evaluate-button, .next-button {
+    background: linear-gradient(45deg, $accent-pink, $accent-purple);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    &:disabled {
+      background: rgba(255, 255, 255, 0.2);
+      cursor: not-allowed;
+    }
+  }
+
+  .progress-container {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, $accent-pink, $accent-purple);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+  }
+
+  .voice-answer {
+    margin: 2rem 0;
+
+    .recording-controls {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+
+      .record-button, .stop-button {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+    }
+
+    .transcript-box {
+      textarea {
+        background: rgba(255, 255, 255, 0.05);
+        min-height: 100px;
+        resize: vertical;
+      }
+    }
+  }
+
+  .ai-evaluation {
+    margin: 2rem 0;
+
+    .scores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+
+      .score-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        .score-value {
+          font-size: 2rem;
+          font-weight: bold;
+          color: $accent-pink;
+          margin-top: 0.5rem;
+        }
+      }
+    }
+  }
+
+  .ai-feedback {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+
+    .feedback-section {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      ul {
+        padding-left: 1.5rem;
+        margin-top: 0.5rem;
+      }
+    }
+  }
+
+  .ideal-answer {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 2rem 0;
+  }
+
+  .next-question {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2rem;
+  }
+
+  .final-result {
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+
+      .summary-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        .circular-progress {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          background: conic-gradient($accent-purple 0%, $accent-pink 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 1rem auto;
+
+          span {
+            font-size: 1.5rem;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+
+    .ai-suggestions {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin: 2rem 0;
+
+      ul {
+        padding-left: 1.5rem;
+      }
+    }
+
+    .final-actions {
+      display: flex;
+      gap: 1rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+
+      button {
+        flex: 1;
+        min-width: 200px;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+      }
+    }
+
+    .interview-history {
+      margin-top: 3rem;
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th, td {
+          padding: 0.75rem;
+          text-align: left;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+          background: rgba(255, 255, 255, 0.05);
+        }
+
+        button {
+          padding: 0.5rem 1rem;
+          border-radius: 0.25rem;
+          border: none;
+          cursor: pointer;
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .ai-interview-container {
+    padding: 1rem;
+
+    .form-row {
+      flex-direction: column;
+    }
+
+    .ai-feedback {
+      grid-template-columns: 1fr;
+    }
+
+    .final-actions {
+      flex-direction: column;
+    }
+  }
+}

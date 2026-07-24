@@ -1,50 +1,58 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../features/auth/hooks/useAuth";
 import "../styles/features.scss";
 
 const Features = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   const features = [
     {
       icon: "📄",
       title: "AI Resume Builder",
-      description: "Generate ATS-friendly resumes in minutes."
+      description: "Fill a professional resume form, generate an ATS-friendly resume, preview, and download as PDF.",
+      path: "/resume"
     },
     {
       icon: "🎯",
       title: "ATS Resume Score",
-      description: "Analyze resumes and improve ATS compatibility."
-    },
-    {
-      icon: "📥",
-      title: "Resume PDF Export",
-      description: "Download professional resumes instantly."
+      description: "Upload a resume (PDF/DOCX), analyze it, and get ATS score, strengths, weaknesses, and suggestions.",
+      path: "/resume"
     },
     {
       icon: "🎤",
-      title: "AI Mock Interview",
-      description: "Practice technical and HR interviews with AI."
-    },
-    {
-      icon: "💡",
-      title: "Personalized Interview Questions",
-      description: "Questions generated from Resume + Job Description."
+      title: "Mock Interview",
+      description: "Use your resume and job description to generate AI interview questions, answer one at a time, and get AI feedback.",
+      path: "/mock-interview"
     },
     {
       icon: "🤖",
-      title: "AI Feedback",
-      description: "Receive detailed feedback after every interview."
+      title: "AI Interview",
+      description: "Start an AI-powered interview session with technical and HR questions, record answers, and get a final report.",
+      path: "/ai-interview"
     },
     {
       icon: "📊",
-      title: "Performance Dashboard",
-      description: "Track interview progress and improvement."
+      title: "Dashboard",
+      description: "View resume score, recent interviews, resume status, job match score, and progress summary.",
+      path: "/dashboard"
     },
     {
-      icon: "🔍",
-      title: "Job Match Analysis",
-      description: "Compare resume with Job Description."
+      icon: "👤",
+      title: "Profile",
+      description: "View and edit your profile, update skills, education, projects, experience, and profile photo.",
+      path: "/profile"
     }
   ];
+
+  const handleFeatureClick = (path) => {
+    if (!user) {
+      navigate("/login", { state: { message: "Please login to use this feature." } });
+      return;
+    }
+    navigate(path);
+  };
   
   const whyChoose = [
     {
@@ -107,7 +115,12 @@ const Features = () => {
         {/* Features Grid */}
         <section id="features" className="features-grid">
           {features.map((feature, index) => (
-            <div key={index} className="feature-card">
+            <div
+              key={index}
+              className="feature-card"
+              onClick={() => handleFeatureClick(feature.path)}
+              style={{ cursor: "pointer" }}
+            >
               <div className="feature-card__icon">{feature.icon}</div>
               <h3 className="feature-card__title">{feature.title}</h3>
               <p className="feature-card__description">{feature.description}</p>
