@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import CustomDropdown from "../components/CustomDropdown";
 import "../styles/mockInterview.scss";
+import "../styles/customDropdown.scss";
 
 const MockInterview = () => {
   // State for setup phase
@@ -253,27 +255,27 @@ const MockInterview = () => {
             </p>
           </div>
           <div className="mock-interview-controls">
-            <select
-              className="mock-interview-select"
+            <CustomDropdown
               value={interviewDifficulty}
               onChange={(e) => setInterviewDifficulty(e.target.value)}
+              options={[ 
+                { value: "easy", label: "Easy" },
+                { value: "medium", label: "Medium" },
+                { value: "hard", label: "Hard" }
+              ]}
               disabled={interviewState !== "setup"}
-            >
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-            <select
-              className="mock-interview-select"
+            />
+            <CustomDropdown
               value={interviewType}
               onChange={(e) => setInterviewType(e.target.value)}
+              options={[ 
+                { value: "hr", label: "HR Interview" },
+                { value: "technical", label: "Technical Interview" },
+                { value: "behavioral", label: "Behavioral Interview" },
+                { value: "mixed", label: "Mixed Interview" }
+              ]}
               disabled={interviewState !== "setup"}
-            >
-              <option value="hr">HR Interview</option>
-              <option value="technical">Technical Interview</option>
-              <option value="behavioral">Behavioral Interview</option>
-              <option value="mixed">Mixed Interview</option>
-            </select>
+            />
           </div>
         </header>
         
@@ -351,49 +353,49 @@ const MockInterview = () => {
                 <h3 className="setting-card__title">
                   <span>🌐</span> Language
                 </h3>
-                <select
-                  className="mock-interview-select"
+                <CustomDropdown
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
+                  options={[ 
+                    { value: "english", label: "English" },
+                    { value: "hindi", label: "Hindi" }
+                  ]}
                   disabled={interviewState !== "setup"}
-                >
-                  <option value="english">English</option>
-                  <option value="hindi">Hindi</option>
-                </select>
+                />
               </div>
               
               <div className="setting-card">
                 <h3 className="setting-card__title">
                   <span>📊</span> Question Count
                 </h3>
-                <select
-                  className="mock-interview-select"
+                <CustomDropdown
                   value={questionCount}
                   onChange={(e) => setQuestionCount(parseInt(e.target.value))}
+                  options={[ 
+                    { value: 5, label: "5" },
+                    { value: 10, label: "10" },
+                    { value: 15, label: "15" },
+                    { value: 20, label: "20" }
+                  ]}
                   disabled={interviewState !== "setup"}
-                >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={15}>15</option>
-                  <option value={20}>20</option>
-                </select>
+                />
               </div>
               
               <div className="setting-card">
                 <h3 className="setting-card__title">
                   <span>⏱️</span> Expected Duration
                 </h3>
-                <select
-                  className="mock-interview-select"
+                <CustomDropdown
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
+                  options={[ 
+                    { value: "5 min", label: "5 min" },
+                    { value: "10 min", label: "10 min" },
+                    { value: "20 min", label: "20 min" },
+                    { value: "30 min", label: "30 min" }
+                  ]}
                   disabled={interviewState !== "setup"}
-                >
-                  <option value="5 min">5 min</option>
-                  <option value="10 min">10 min</option>
-                  <option value="20 min">20 min</option>
-                  <option value="30 min">30 min</option>
-                </select>
+                />
               </div>
             </div>
           </div>

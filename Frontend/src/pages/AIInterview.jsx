@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
+import CustomDropdown from '../components/CustomDropdown';
 import '../styles/aiInterview.scss';
+import '../styles/customDropdown.scss';
 
 const AIInterview = () => {
   // Step 1: Upload Details
@@ -221,41 +223,60 @@ const AIInterview = () => {
             <div className="form-row">
               <div className="form-group">
                 <label>Job Role</label>
-                <select value={jobRole} onChange={(e) => setJobRole(e.target.value)}>
-                  <option value="">Select Role</option>
-                  <option value="Frontend Developer">Frontend Developer</option>
-                  <option value="Backend Developer">Backend Developer</option>
-                  <option value="Full Stack Developer">Full Stack Developer</option>
-                  <option value="Data Scientist">Data Scientist</option>
-                </select>
+                <CustomDropdown
+                  value={jobRole}
+                  onChange={(e) => setJobRole(e.target.value)}
+                  options={[ 
+                    { value: "", label: "Select Role" },
+                    { value: "Frontend Developer", label: "Frontend Developer" },
+                    { value: "Backend Developer", label: "Backend Developer" },
+                    { value: "Full Stack Developer", label: "Full Stack Developer" },
+                    { value: "Data Scientist", label: "Data Scientist" }
+                  ]}
+                  placeholder="Select Role"
+                />
               </div>
               <div className="form-group">
                 <label>Experience Level</label>
-                <select value={experienceLevel} onChange={(e) => setExperienceLevel(e.target.value)}>
-                  <option value="">Select Experience</option>
-                  <option value="Fresher">Fresher</option>
-                  <option value="1 Year">1 Year</option>
-                  <option value="2+ Years">2+ Years</option>
-                </select>
+                <CustomDropdown
+                  value={experienceLevel}
+                  onChange={(e) => setExperienceLevel(e.target.value)}
+                  options={[ 
+                    { value: "", label: "Select Experience" },
+                    { value: "Fresher", label: "Fresher" },
+                    { value: "1 Year", label: "1 Year" },
+                    { value: "2+ Years", label: "2+ Years" }
+                  ]}
+                  placeholder="Select Experience"
+                />
               </div>
             </div>
             <div className="form-row">
               <div className="form-group">
                 <label>Difficulty</label>
-                <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
-                  <option value="">Select Difficulty</option>
-                  <option value="Easy">Easy</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Hard">Hard</option>
-                </select>
+                <CustomDropdown
+                  value={difficulty}
+                  onChange={(e) => setDifficulty(e.target.value)}
+                  options={[ 
+                    { value: "", label: "Select Difficulty" },
+                    { value: "Easy", label: "Easy" },
+                    { value: "Medium", label: "Medium" },
+                    { value: "Hard", label: "Hard" }
+                  ]}
+                  placeholder="Select Difficulty"
+                />
               </div>
               <div className="form-group">
                 <label>Number of Questions</label>
-                <select value={numQuestions} onChange={(e) => setNumQuestions(Number(e.target.value))}>
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={15}>15</option>
-                </select>
+                <CustomDropdown
+                  value={numQuestions}
+                  onChange={(e) => setNumQuestions(Number(e.target.value))}
+                  options={[ 
+                    { value: 5, label: "5" },
+                    { value: 10, label: "10" },
+                    { value: 15, label: "15" }
+                  ]}
+                />
               </div>
             </div>
             <button className="generate-button" onClick={generateQuestions} disabled={isGenerating}>
