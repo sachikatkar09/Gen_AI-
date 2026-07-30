@@ -161,6 +161,15 @@ body {
     border-color: $primary;
     box-shadow: 0 0 0 3px $border-glow;
   }
+
+  /* Dropdown options styling */
+  option {
+    background: #FFFFFF;
+    color: #111827;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
 }
 
 // ── Setup Section ───────────────────────────────────────────────────────────
