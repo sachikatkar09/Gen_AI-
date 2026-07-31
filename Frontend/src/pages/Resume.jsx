@@ -464,9 +464,428 @@ const Resume = () => {
   );
 };
 
+// ── ATS Resume Component (Shared for Preview and PDF) ────────────────────────
+const ATSResume = ({ data, isPrint = false }) => {
+  // Format contact information
+  const formatContactInfo = () => {
+    const contactItems = [];
+    
+    if (data.personal.phone) contactItems.push(data.personal.phone);
+    if (data.personal.email) contactItems.push(data.personal.email);
+    if (data.personal.location) contactItems.push(data.personal.location);
+    if (data.personal.linkedin) contactItems.push(`LinkedIn: ${data.personal.linkedin.replace(/^https?:\/\//, '')}`);
+    if (data.personal.github) contactItems.push(`GitHub: ${data.personal.github.replace(/^https?:\/\//, '')}`);
+    if (data.personal.portfolio) contactItems.push(`Portfolio: ${data.personal.portfolio.replace(/^https?:\/\//, '')}`);
+    
+    return contactItems.join(' | ');
+  };
+  
+  // Format experience description
+  const formatDescription = (description) => {
+    if (!description) return null;
+    
+    // Split by newlines or bullet points
+    const items = description.split(/\n|•|\*|-/).filter(item => item.trim());
+    
+    if (items.length <= 1) {
+      return <p style={{ margin: '0.3rem 0' }}>{description}</p>;
+    }
+    
+    return (
+      <ul style={{ margin: '0.3rem 0 0 1.2rem', padding: 0 }}>
+        {items.map((item, i) => (
+          <li key={i} style={{ marginBottom: '0.2rem' }}>{item.trim()}</li>
+        ))}
+      </ul>
+    );
+  };
+  
+  // Format project features
+  const formatProjectFeatures = (description) => {
+    if (!description) return null;
+    
+    const items = description.split(/\n|•|\*|-/).filter(item => item.trim());
+    
+    if (items.length <= 1) {
+      return <p style={{ margin: '0.3rem 0' }}>{description}</p>;
+    }
+    
+    return (
+      <ul style={{ margin: '0.3rem 0 0 1.2rem', padding: 0 }}>
+        {items.map((item, i) => (
+          <li key={i} style={{ marginBottom: '0.2rem' }}>{item.trim()}</li>
+        ))}
+      </ul>
+    );
+  };
+  
+  // Check if section has content
+  const hasSummary = data.summary && data.summary.trim();
+  const hasSkills = data.skills && data.skills.length > 0;
+  const hasEducation = data.education && data.education.some(e => e.college && e.college.trim());
+  const hasExperience = data.experience && data.experience.some(e => e.company && e.company.trim());
+  const hasProjects = data.projects && data.projects.some(p => p.name && p.name.trim());
+  const hasCertifications = data.certifications && data.certifications.some(c => c.name && c.name.trim());
+  const hasAchievements = data.achievements && data.achievements.some(a => a && a.trim());
+  const hasLanguages = data.languages && data.languages.some(l => l && l.trim());
+  const hasInterests = data.interests && data.interests.trim();
+
+  // Font settings
+  const fontFamily = isPrint ? "'Times New Roman', Times, serif" : "'Georgia', 'Times New Roman', Times, serif";
+  const baseFontSize = isPrint ? '11pt' : '12px';
+  const lineHeight = isPrint ? '1.3' : '1.4';
+  
+  return (
+    <div style={
+      isPrint ? {
+        fontFamily: fontFamily,
+        fontSize: baseFontSize,
+        lineHeight: lineHeight,
+        color: '#000000',
+        width: '100%',
+        maxWidth: '8.5in',
+        margin: '0 auto',
+        padding: '0.6in',
+        pageBreakAfter: 'avoid'
+      } : {
+        fontFamily: fontFamily,
+        fontSize: baseFontSize,
+        lineHeight: lineHeight,
+        color: '#000000',
+        width: '100%',
+        maxWidth: '816px', // A4 width in pixels at 96dpi
+        margin: '0 auto',
+        padding: '24px',
+        boxShadow: '0 0 20px rgba(0,0,0,0.1)',
+        background: 'white',
+        minHeight: '1122px' // A4 height in pixels at 96dpi
+      }
+    }>
+      {/* Header */}
+      {data.personal.fullName && (
+        <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+          <h1 style={
+            isPrint ? {
+              fontSize: '28pt',
+              fontWeight: 'bold',
+              margin: '0 0 4px 0',
+              lineHeight: '1.1'
+            } : {
+              fontSize: '28px',
+              fontWeight: 'bold',
+              margin: '0 0 6px 0',
+              lineHeight: '1.1'
+            }
+          }>
+            {data.personal.fullName}
+          </h1>
+        </div>
+      )}
+      
+      {formatContactInfo() && (
+        <div style={
+          isPrint ? {
+            textAlign: 'center',
+            fontSize: '10pt',
+            color: '#333333',
+            marginBottom: '16px',
+            borderBottom: '1px solid #dddddd',
+            paddingBottom: '8px'
+          } : {
+            textAlign: 'center',
+            fontSize: '12px',
+            color: '#333333',
+            marginBottom: '16px',
+            borderBottom: '1px solid #dddddd',
+            paddingBottom: '8px'
+          }
+        }>
+          {formatContactInfo()}
+        </div>
+      )}
+      
+      {/* Professional Summary */}
+      {hasSummary && (
+        <div style={{ marginBottom: '16px' }}>
+          <h2 style={
+            isPrint ? {
+              fontSize: '15pt',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 6px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '2px'
+            } : {
+              fontSize: '15px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 8px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '3px'
+            }
+          }>
+            Professional Summary
+          </h2>
+          <p style={{ margin: '0', whiteSpace: 'pre-line' }}>{data.summary}</p>
+        </div>
+      )}
+      
+      {/* Technical Skills */}
+      {hasSkills && (
+        <div style={{ marginBottom: '16px' }}>
+          <h2 style={
+            isPrint ? {
+              fontSize: '15pt',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 6px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '2px'
+            } : {
+              fontSize: '15px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 8px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '3px'
+            }
+          }>
+            Technical Skills
+          </h2>
+          <p style={{ margin: '0' }}>{data.skills.join(', ')}</p>
+        </div>
+      )}
+      
+      {/* Experience */}
+      {hasExperience && (
+        <div style={{ marginBottom: '16px' }}>
+          <h2 style={
+            isPrint ? {
+              fontSize: '15pt',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 6px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '2px'
+            } : {
+              fontSize: '15px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 8px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '3px'
+            }
+          }>
+            Experience
+          </h2>
+          {data.experience.filter(e => e.company && e.company.trim()).map((exp, i) => (
+            <div key={i} style={{ marginBottom: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <span style={{ fontWeight: 'bold' }}>{exp.role}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <span>{exp.company}</span>
+                <span>{exp.startDate}{exp.endDate ? ` - ${exp.endDate}` : ''}</span>
+              </div>
+              <div>
+                {formatDescription(exp.description)}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Projects */}
+      {hasProjects && (
+        <div style={{ marginBottom: '16px' }}>
+          <h2 style={
+            isPrint ? {
+              fontSize: '15pt',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 6px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '2px'
+            } : {
+              fontSize: '15px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 8px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '3px'
+            }
+          }>
+            Projects
+          </h2>
+          {data.projects.filter(p => p.name && p.name.trim()).map((proj, i) => (
+            <div key={i} style={{ marginBottom: '12px' }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>{proj.name}</div>
+              {proj.technologies && <div style={{ fontStyle: 'italic', marginBottom: '4px' }}>{proj.technologies}</div>}
+              <div>
+                {formatProjectFeatures(proj.description)}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Education */}
+      {hasEducation && (
+        <div style={{ marginBottom: '16px' }}>
+          <h2 style={
+            isPrint ? {
+              fontSize: '15pt',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 6px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '2px'
+            } : {
+              fontSize: '15px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 8px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '3px'
+            }
+          }>
+            Education
+          </h2>
+          {data.education.filter(e => e.college && e.college.trim()).map((edu, i) => (
+            <div key={i} style={{ marginBottom: '8px' }}>
+              <div style={{ fontWeight: 'bold' }}>{edu.degree}{edu.branch ? ` in ${edu.branch}` : ''}</div>
+              <div>{edu.college}</div>
+              <div>
+                {edu.startYear}{edu.endYear ? ` - ${edu.endYear}` : ''}
+                {edu.cgpa ? ` | CGPA: ${edu.cgpa}` : ''}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Certifications */}
+      {hasCertifications && (
+        <div style={{ marginBottom: '16px' }}>
+          <h2 style={
+            isPrint ? {
+              fontSize: '15pt',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 6px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '2px'
+            } : {
+              fontSize: '15px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 8px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '3px'
+            }
+          }>
+            Certifications
+          </h2>
+          {data.certifications.filter(c => c.name && c.name.trim()).map((cert, i) => (
+            <div key={i} style={{ marginBottom: '8px' }}>
+              <div style={{ fontWeight: 'bold' }}>{cert.name}</div>
+              {cert.organization && <div>{cert.organization}</div>}
+              {cert.year && <div>{cert.year}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Achievements */}
+      {hasAchievements && (
+        <div style={{ marginBottom: '16px' }}>
+          <h2 style={
+            isPrint ? {
+              fontSize: '15pt',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 6px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '2px'
+            } : {
+              fontSize: '15px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 8px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '3px'
+            }
+          }>
+            Achievements
+          </h2>
+          <ul style={{ margin: '0', paddingLeft: '20px' }}>
+            {data.achievements.filter(a => a && a.trim()).map((ach, i) => (
+              <li key={i} style={{ marginBottom: '4px' }}>{ach}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      
+      {/* Languages */}
+      {hasLanguages && (
+        <div style={{ marginBottom: '16px' }}>
+          <h2 style={
+            isPrint ? {
+              fontSize: '15pt',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 6px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '2px'
+            } : {
+              fontSize: '15px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 8px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '3px'
+            }
+          }>
+            Languages
+          </h2>
+          <p style={{ margin: '0' }}>{data.languages.filter(l => l && l.trim()).join(', ')}</p>
+        </div>
+      )}
+      
+      {/* Interests */}
+      {hasInterests && (
+        <div>
+          <h2 style={
+            isPrint ? {
+              fontSize: '15pt',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 6px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '2px'
+            } : {
+              fontSize: '15px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              margin: '0 0 8px 0',
+              borderBottom: '1px solid #000000',
+              paddingBottom: '3px'
+            }
+          }>
+            Interests
+          </h2>
+          <p style={{ margin: '0' }}>{data.interests}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ── Preview Component ────────────────────────────────────────────────────────
 const ResumePreview = ({ data }) => {
-  const hasContent = data.personal.fullName || data.summary || data.skills.length || data.education.some((e) => e.college) || data.projects.some((p) => p.name) || data.experience.some((e) => e.company);
+  const hasContent = data.personal.fullName || data.summary || data.skills.length || 
+                    data.education.some((e) => e.college) || data.projects.some((p) => p.name) || 
+                    data.experience.some((e) => e.company);
 
   if (!hasContent) {
     return (
@@ -479,124 +898,12 @@ const ResumePreview = ({ data }) => {
     );
   }
 
-  return (
-    <div className="ats-resume">
-      {data.personal.fullName && <div className="ats-resume__name">{data.personal.fullName}</div>}
-      <div className="ats-resume__contact">
-        {data.personal.email && <span className="ats-resume__contact-item">{data.personal.email}</span>}
-        {data.personal.phone && <span className="ats-resume__contact-item">{data.personal.phone}</span>}
-        {data.personal.location && <span className="ats-resume__contact-item">{data.personal.location}</span>}
-        {data.personal.linkedin && <span className="ats-resume__contact-item">LinkedIn</span>}
-        {data.personal.github && <span className="ats-resume__contact-item">GitHub</span>}
-        {data.personal.portfolio && <span className="ats-resume__contact-item">Portfolio</span>}
-      </div>
-
-      {data.summary && (
-        <div className="ats-resume__section">
-          <div className="ats-resume__section-title">Professional Summary</div>
-          <div className="ats-resume__summary">{data.summary}</div>
-        </div>
-      )}
-
-      {data.skills.length > 0 && (
-        <div className="ats-resume__section">
-          <div className="ats-resume__section-title">Skills</div>
-          <div className="ats-resume__skills">
-            {data.skills.map((s) => <span className="ats-resume__skill-tag" key={s}>{s}</span>)}
-          </div>
-        </div>
-      )}
-
-      {data.education.some((e) => e.college) && (
-        <div className="ats-resume__section">
-          <div className="ats-resume__section-title">Education</div>
-          {data.education.filter((e) => e.college).map((edu, i) => (
-            <div className="ats-resume__entry" key={i}>
-              <div className="ats-resume__entry-header">
-                <span className="ats-resume__entry-title">{edu.degree}{edu.branch ? ` in ${edu.branch}` : ""}</span>
-                <span className="ats-resume__entry-date">{edu.startYear}{edu.endYear ? ` - ${edu.endYear}` : ""}</span>
-              </div>
-              <div className="ats-resume__entry-subtitle">{edu.college}{edu.cgpa ? ` | CGPA: ${edu.cgpa}` : ""}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {data.projects.some((p) => p.name) && (
-        <div className="ats-resume__section">
-          <div className="ats-resume__section-title">Projects</div>
-          {data.projects.filter((p) => p.name).map((proj, i) => (
-            <div className="ats-resume__entry" key={i}>
-              <div className="ats-resume__entry-header">
-                <span className="ats-resume__entry-title">{proj.name}</span>
-              </div>
-              {proj.technologies && <div className="ats-resume__entry-subtitle">{proj.technologies}</div>}
-              {proj.description && <div className="ats-resume__entry-desc">{proj.description}</div>}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {data.experience.some((e) => e.company) && (
-        <div className="ats-resume__section">
-          <div className="ats-resume__section-title">Experience</div>
-          {data.experience.filter((e) => e.company).map((exp, i) => (
-            <div className="ats-resume__entry" key={i}>
-              <div className="ats-resume__entry-header">
-                <span className="ats-resume__entry-title">{exp.role}</span>
-                <span className="ats-resume__entry-date">{exp.startDate}{exp.endDate ? ` - ${exp.endDate}` : ""}</span>
-              </div>
-              <div className="ats-resume__entry-subtitle">{exp.company}</div>
-              {exp.description && <div className="ats-resume__entry-desc">{exp.description}</div>}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {data.certifications.some((c) => c.name) && (
-        <div className="ats-resume__section">
-          <div className="ats-resume__section-title">Certifications</div>
-          {data.certifications.filter((c) => c.name).map((cert, i) => (
-            <div className="ats-resume__entry" key={i}>
-              <div className="ats-resume__entry-header">
-                <span className="ats-resume__entry-title">{cert.name}</span>
-                <span className="ats-resume__entry-date">{cert.year}</span>
-              </div>
-              {cert.organization && <div className="ats-resume__entry-subtitle">{cert.organization}</div>}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {data.achievements.filter((a) => a).length > 0 && (
-        <div className="ats-resume__section">
-          <div className="ats-resume__section-title">Achievements</div>
-          <ul className="ats-resume__list">
-            {data.achievements.filter((a) => a).map((ach, i) => <li key={i}>{ach}</li>)}
-          </ul>
-        </div>
-      )}
-
-      {data.languages.filter((l) => l).length > 0 && (
-        <div className="ats-resume__section">
-          <div className="ats-resume__section-title">Languages</div>
-          <div className="ats-resume__languages">{data.languages.filter((l) => l).join(", ")}</div>
-        </div>
-      )}
-
-      {data.interests && (
-        <div className="ats-resume__section">
-          <div className="ats-resume__section-title">Interests</div>
-          <div className="ats-resume__interests">{data.interests}</div>
-        </div>
-      )}
-    </div>
-  );
+  return <ATSResume data={data} />;
 };
 
 // ── Print Version (for PDF) ──────────────────────────────────────────────────
 const ResumePrint = ({ data }) => (
-  <ResumePreview data={data} />
+  <ATSResume data={data} isPrint={true} />
 );
 
 export default Resume;
