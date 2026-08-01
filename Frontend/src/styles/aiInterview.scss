@@ -1,14 +1,25 @@
-@use './variables' as *;
+// Variables
+$bg-page: #0f172a;
+$bg-card: #1e1b4b;
+$bg-glass: rgba(255, 255, 255, 0.05);
+$text-primary: #f8fafc;
+$text-muted: #cbd5e1;
+$accent-pink: #ec4899;
+$accent-purple: #a855f7;
+$border-color: rgba(255, 255, 255, 0.1);
+$border-glow: rgba(236, 72, 153, 0.3);
+$font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
 // Animations
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@keyframes fadeIn {
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -16,339 +27,775 @@
   }
 }
 
-// Hover lift effect
-.generate-button,
-.record-button,
-.stop-button,
-.evaluate-button,
-.next-button,
-.score-card,
-.summary-card {
-  transition: all 0.3s ease;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-generate-button:hover,
-.record-button:hover,
-.stop-button:hover,
-.evaluate-button:hover,
-.next-button:hover,
-.score-card:hover,
-.summary-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-// Progress bar animation
-.progress-bar {
-  transition: width 0.5s ease;
-}
-
-// Circular progress animation
-.circular-progress {
-  transition: background 0.5s ease;
-}
-
+// Base Styles
 .ai-interview-container {
+  min-height: calc(100vh - 70px);
+  background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 50%, #111827 100%);
+  color: $text-primary;
+  font-family: $font-stack;
   padding: 2rem;
-  min-height: 100vh;
-  background: $gradient-dark;
-  color: $text-light;
+  position: relative;
+  overflow-x: hidden;
 
-  .upload-details, .ai-questions, .final-result {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 1rem;
-    padding: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  &::before {
+    content: "";
+    position: fixed;
+    top: -200px;
+    right: -200px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba($accent-pink, 0.15), transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
   }
 
-  h1, h2, h3 {
-    color: $accent-pink;
-    margin-bottom: 1.5rem;
-  }
-
-  .form-group {
-    margin-bottom: 1.5rem;
-
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      color: $text-light;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 0.75rem;
-      border-radius: 10px;
-      border: 1px solid rgba(160, 160, 160, 0.3);
-      background: #232540;
-      color: $text-light;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 500;
-
-      &::placeholder {
-        color: rgba(255, 255, 255, 0.5);
-      }
-    }
-
-    /* Dropdown styling for cross-browser consistency */
-    select {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23FFFFFF' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 0.75rem center;
-      background-size: 16px;
-      padding-right: 2.5rem;
-    }
-
-    select option {
-      background: #232540;
-      color: #FFFFFF;
-      padding: 0.5rem;
-    }
-
-    textarea {
-      min-height: 150px;
-      resize: vertical;
-    }
-  }
-
-  .form-row {
-    display: flex;
-    gap: 1rem;
-
-    .form-group {
-      flex: 1;
-    }
-  }
-
-  .generate-button, .record-button, .stop-button, .evaluate-button, .next-button {
-    background: linear-gradient(45deg, $accent-pink, $accent-purple);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    &:disabled {
-      background: rgba(255, 255, 255, 0.2);
-      cursor: not-allowed;
-    }
-  }
-
-  .progress-container {
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-    margin-bottom: 2rem;
-    overflow: hidden;
-
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, $accent-pink, $accent-purple);
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
-  }
-
-  .voice-answer {
-    margin: 2rem 0;
-
-    .recording-controls {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1rem;
-
-      .record-button, .stop-button {
-        padding: 1rem 2rem;
-        font-size: 1.1rem;
-        border-radius: 50px;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-    }
-
-    .transcript-box {
-      textarea {
-        background: rgba(255, 255, 255, 0.05);
-        min-height: 100px;
-        resize: vertical;
-      }
-    }
-  }
-
-  .ai-evaluation {
-    margin: 2rem 0;
-
-    .scores-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-
-      .score-card {
-        background: rgba(255, 255, 255, 0.05);
-        padding: 1rem;
-        border-radius: 0.5rem;
-        text-align: center;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-
-        .score-value {
-          font-size: 2rem;
-          font-weight: bold;
-          color: $accent-pink;
-          margin-top: 0.5rem;
-        }
-      }
-    }
-  }
-
-  .ai-feedback {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin: 2rem 0;
-
-    .feedback-section {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-
-      ul {
-        padding-left: 1.5rem;
-        margin-top: 0.5rem;
-      }
-    }
-  }
-
-  .ideal-answer {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    margin: 2rem 0;
-  }
-
-  .next-question {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 2rem;
-  }
-
-  .final-result {
-    .summary-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      margin: 2rem 0;
-
-      .summary-card {
-        background: rgba(255, 255, 255, 0.05);
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        text-align: center;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-
-        .circular-progress {
-          width: 100px;
-          height: 100px;
-          border-radius: 50%;
-          background: conic-gradient($accent-purple 0%, $accent-pink 100%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 1rem auto;
-
-          span {
-            font-size: 1.5rem;
-            font-weight: bold;
-          }
-        }
-      }
-    }
-
-    .ai-suggestions {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      margin: 2rem 0;
-
-      ul {
-        padding-left: 1.5rem;
-      }
-    }
-
-    .final-actions {
-      display: flex;
-      gap: 1rem;
-      margin: 2rem 0;
-      flex-wrap: wrap;
-
-      button {
-        flex: 1;
-        min-width: 200px;
-        padding: 0.75rem;
-        border-radius: 0.5rem;
-        border: none;
-        font-weight: bold;
-        cursor: pointer;
-      }
-    }
-
-    .interview-history {
-      margin-top: 3rem;
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-
-        th, td {
-          padding: 0.75rem;
-          text-align: left;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        th {
-          background: rgba(255, 255, 255, 0.05);
-        }
-
-        button {
-          padding: 0.5rem 1rem;
-          border-radius: 0.25rem;
-          border: none;
-          cursor: pointer;
-          margin-right: 0.5rem;
-        }
-      }
-    }
+  &::after {
+    content: "";
+    position: fixed;
+    bottom: -200px;
+    left: -200px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba($accent-purple, 0.15), transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
   }
 }
 
+// Container
+.interview-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+// Fade In Animation
+.fade-in {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+// Section Headers
+.form-section__header,
+.interview-setup__header,
+.final-report__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-section__icon,
+.interview-setup__icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba($accent-pink, 0.1);
+  border-radius: 10px;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+// Form Elements
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid $border-color;
+  background: $bg-glass;
+  color: $text-primary;
+  font-family: $font-stack;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+
+  &::placeholder {
+    color: rgba($text-muted, 0.6);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $accent-pink;
+    box-shadow: 0 0 0 3px $border-glow;
+  }
+
+  &.error {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+  }
+}
+
+.form-control option {
+  background: $bg-card;
+  color: $text-primary;
+}
+
+// Textarea
+.form-control.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+// Error Messages
+.error-message {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+// Buttons
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  min-width: 120px;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, $accent-pink, #db2777);
+  color: white;
+  box-shadow: 0 4px 15px rgba($accent-pink, 0.3);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($accent-pink, 0.4);
+  }
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: $text-primary;
+  border: 1px solid $border-color;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: $text-primary;
+  border: 1px solid $border-color;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #dc2626;
+  }
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+// Spinner
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+
+// Resume Upload
+.resume-upload {
+  margin-bottom: 1.5rem;
+}
+
+.resume-upload__label {
+  display: block;
+}
+
+.resume-upload__area {
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px dashed $border-color;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+
+  &:hover {
+    border-color: $accent-pink;
+    background: rgba($accent-pink, 0.05);
+  }
+}
+
+.resume-upload__icon {
+  font-size: 2.5rem;
+  color: $accent-pink;
+}
+
+.resume-upload__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.resume-upload__subtitle {
+  font-size: 0.9rem;
+  color: $text-muted;
+}
+
+.resume-upload__format {
+  font-size: 0.8rem;
+  color: rgba($text-muted, 0.7);
+}
+
+.resume-uploaded {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba($accent-pink, 0.08);
+  border: 1px solid rgba($accent-pink, 0.2);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.resume-uploaded__details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.resume-uploaded__name {
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.resume-uploaded__size {
+  font-size: 0.8rem;
+  color: $text-muted;
+}
+
+// Interview Setup Section
+.interview-setup {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid $border-color;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.interview-setup__header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.interview-setup__header p {
+  color: $text-muted;
+  font-size: 1rem;
+}
+
+// Generate Button
+.generate-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+// Interview Section
+.interview-section {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid $border-color;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+// Progress Bar
+.interview-progress {
+  margin-bottom: 2rem;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: $text-muted;
+  margin-bottom: 0.5rem;
+  text-align: right;
+}
+
+.progress-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, $accent-pink, $accent-purple);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+// Question Card
+.question-card {
+  background: $bg-glass;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid $border-color;
+}
+
+.question-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: $text-primary;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+// Answer Section
+.answer-section {
+  margin-bottom: 2rem;
+}
+
+.answer-methods {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+// Transcript
+.transcript-box {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 1.5rem;
+  border: 1px solid $border-color;
+  margin-top: 1rem;
+}
+
+.transcript-box h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: $text-primary;
+}
+
+.transcript-text {
+  font-size: 0.95rem;
+  color: $text-muted;
+  line-height: 1.6;
+}
+
+// Interview Navigation
+.interview-navigation {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+// Evaluation Section
+.evaluation-section {
+  margin-top: 2rem;
+}
+
+.evaluation-header h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: $text-primary;
+}
+
+// Scores Grid
+.scores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.score-card {
+  background: $bg-glass;
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid $border-color;
+}
+
+.score-label {
+  font-size: 0.8rem;
+  color: $text-muted;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.score-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $accent-pink;
+}
+
+// Feedback Grid
+.feedback-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.feedback-card {
+  background: $bg-glass;
+  border-radius: 10px;
+  padding: 1.5rem;
+  border: 1px solid $border-color;
+}
+
+.feedback-card h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: $text-primary;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.feedback-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feedback-card li {
+  font-size: 0.9rem;
+  color: $text-muted;
+  margin-bottom: 0.5rem;
+  padding-left: 1.2rem;
+  position: relative;
+  line-height: 1.5;
+
+  &::before {
+    content: "•";
+    color: $accent-pink;
+    position: absolute;
+    left: 0;
+  }
+}
+
+// Ideal Answer
+.ideal-answer-card {
+  background: $bg-glass;
+  border-radius: 10px;
+  padding: 1.5rem;
+  border: 1px solid $border-color;
+}
+
+.ideal-answer-card h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: $text-primary;
+}
+
+.ideal-answer-text {
+  font-size: 0.95rem;
+  color: $text-muted;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+// Final Report
+.final-report {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid $border-color;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.final-report__header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.final-report__header p {
+  color: $text-muted;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+// Final Score
+.final-score {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.score-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: conic-gradient(
+    $accent-pink 0%,
+    $accent-pink calc(v-bind('interviewSummary.overallScore') * 3.6deg),
+    rgba(255, 255, 255, 0.1) calc(v-bind('interviewSummary.overallScore') * 3.6deg)
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  position: relative;
+}
+
+.score-circle::before {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: $bg-card;
+  border-radius: 50%;
+}
+
+.score-value {
+  position: relative;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $text-primary;
+  z-index: 1;
+}
+
+.score-label {
+  position: relative;
+  font-size: 1rem;
+  color: $text-muted;
+  z-index: 1;
+}
+
+// Score Details
+.score-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+// Analysis Grid
+.analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.analysis-card {
+  background: $bg-glass;
+  border-radius: 10px;
+  padding: 1.5rem;
+  border: 1px solid $border-color;
+}
+
+.analysis-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.analysis-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.analysis-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.analysis-card li {
+  font-size: 0.9rem;
+  color: $text-muted;
+  margin-bottom: 0.5rem;
+  padding-left: 1.2rem;
+  position: relative;
+  line-height: 1.5;
+
+  &::before {
+    content: "•";
+    color: $accent-pink;
+    position: absolute;
+    left: 0;
+  }
+}
+
+// Summary Card
+.summary-card {
+  background: $bg-glass;
+  border-radius: 10px;
+  padding: 1.5rem;
+  border: 1px solid $border-color;
+  margin-bottom: 2rem;
+}
+
+.summary-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.summary-text {
+  font-size: 0.95rem;
+  color: $text-muted;
+  line-height: 1.6;
+}
+
+// Final Actions
+.final-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+// Interview History
+.interview-history {
+  background: $bg-glass;
+  border-radius: 10px;
+  padding: 1.5rem;
+  border: 1px solid $border-color;
+  margin-top: 2rem;
+}
+
+.interview-history__header h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: $text-primary;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table__header,
+.history-table__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 80px 100px 180px;
+  padding: 1rem;
+  border-bottom: 1px solid $border-color;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr 1fr 60px 80px 140px;
+  }
+}
+
+.history-table__header {
+  font-weight: 600;
+  color: $text-primary;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px 8px 0 0;
+}
+
+.history-table__row {
+  &:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+}
+
+.history-empty {
+  text-align: center;
+  padding: 2rem;
+  color: $text-muted;
+}
+
+// Responsive Adjustments
 @media (max-width: 768px) {
   .ai-interview-container {
     padding: 1rem;
-
-    .form-row {
-      flex-direction: column;
-    }
-
-    .ai-feedback {
-      grid-template-columns: 1fr;
-    }
-
-    .final-actions {
-      flex-direction: column;
-    }
+  }
+  
+  .interview-setup,
+  .interview-section,
+  .final-report {
+    padding: 1.5rem;
+  }
+  
+  .question-card {
+    padding: 1.5rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .final-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .btn {
+    width: 100%;
   }
 }

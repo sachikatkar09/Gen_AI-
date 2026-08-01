@@ -45,11 +45,10 @@ const Navbar = () => {
               </Link>
             </div>
           ) : (
-            // Authenticated Navigation
+              // Authenticated Navigation
             <div className="navbar__nav-items">
               <Link to="/dashboard" className="navbar__link">Dashboard</Link>
               <Link to="/resume" className="navbar__link">Resume Builder</Link>
-              <Link to="/mock-interview" className="navbar__link">Mock Interview</Link>
               <Link to="/ai-interview" className="navbar__link">AI Interview</Link>
               <Link to="/profile" className="navbar__link">Profile</Link>
               <button 

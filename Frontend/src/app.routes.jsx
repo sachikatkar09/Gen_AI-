@@ -6,7 +6,6 @@ import Landing from "./pages/Landing.jsx";
 import Dashboard from "./pages/Dashboard";
 import Interview from "./features/interview/pages/Interview";
 import Resume from "./pages/Resume";
-import MockInterview from "./pages/MockInterview";
 import AIInterview from "./pages/AIInterview";
 import Profile from "./pages/Profile";
 import Features from "./pages/Features";
@@ -54,14 +53,6 @@ export const router = createBrowserRouter([
     element: (
       <Protected>
         <Layout><Resume /></Layout>
-      </Protected>
-    ),
-  },
-  {
-    path: "/mock-interview",
-    element: (
-      <Protected>
-        <Layout><MockInterview /></Layout>
       </Protected>
     ),
   },

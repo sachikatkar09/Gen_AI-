@@ -1,120 +1,234 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../features/auth/hooks/useAuth";
 import '../styles/aiInterview.scss';
 
 const AIInterview = () => {
-  // Step 1: Upload Details
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  
+  // Step 1: Setup State
   const [resume, setResume] = useState(null);
   const [jobDescription, setJobDescription] = useState('');
   const [jobRole, setJobRole] = useState('');
   const [experienceLevel, setExperienceLevel] = useState('');
   const [difficulty, setDifficulty] = useState('');
-  const [numQuestions, setNumQuestions] = useState(5);
+  const [numQuestions, setNumQuestions] = useState(10);
   const [isGenerating, setIsGenerating] = useState(false);
-
-  // Step 2: AI Questions
+  const [errors, setErrors] = useState({});
+  
+  // Step 2: Interview State
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-
-  // Step 3: Voice Answer
+  
+  // Step 3: Voice Answer State
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [recordingTime, setRecordingTime] = useState(0);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const recordingIntervalRef = useRef(null);
-
-  // Step 4: AI Evaluation
+  
+  // Step 4: AI Evaluation State
   const [scores, setScores] = useState({
     communication: 0,
     technicalAccuracy: 0,
     confidence: 0,
-    fluency: 0,
-    grammar: 0,
-    relevance: 0,
     completeness: 0,
   });
-
-  // Step 5: AI Feedback
   const [feedback, setFeedback] = useState({
     strengths: [],
     improvements: [],
   });
-
-  // Step 6: Ideal Answer
   const [idealAnswer, setIdealAnswer] = useState('');
-
-  // Step 7: Final Result
+  
+  // Step 5: Final Report State
   const [interviewCompleted, setInterviewCompleted] = useState(false);
   const [interviewSummary, setInterviewSummary] = useState({
     overallScore: 0,
-    confidence: 0,
-    communication: 0,
-    technicalSkills: 0,
-    fluency: 0,
-    atsReadiness: 0,
-    suggestions: [],
+    technicalScore: 0,
+    communicationScore: 0,
+    confidenceScore: 0,
+    strengths: [],
+    weaknesses: [],
+    missingSkills: [],
+    recommendedTopics: [],
+    interviewSummary: '',
   });
+  
+  // Step 6: Interview History
   const [interviewHistory, setInterviewHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
+  
+  // Refs
+  const interviewContainerRef = useRef(null);
 
-  // Handle Resume Upload
+  // Validate required fields
+  const validate = () => {
+    const newErrors = {};
+    if (!jobDescription.trim()) newErrors.jobDescription = "Job Description is required";
+    if (!jobRole) newErrors.jobRole = "Job Role is required";
+    if (!experienceLevel) newErrors.experienceLevel = "Experience Level is required";
+    if (!difficulty) newErrors.difficulty = "Difficulty is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
+  // Handle resume upload
   const handleResumeUpload = (e) => {
-    const file = e.target.files[0];
-    if (file && (file.type === 'application/pdf' || file.name.endsWith('.docx'))) {
+    const file = e.target.files?.[0];
+    if (file && (file.type === 'application/pdf' || file.name.endsWith('.docx') || file.name.endsWith('.doc'))) {
       setResume(file);
     } else {
       alert('Please upload a valid PDF or DOCX file.');
     }
   };
-
-  // Generate AI Questions
-  const generateQuestions = () => {
-    if (!jobDescription || !jobRole || !experienceLevel || !difficulty) {
-      alert('Please fill in all fields.');
-      return;
+  
+  // Handle drag and drop for resume
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && (file.type === 'application/pdf' || file.name.endsWith('.docx') || file.name.endsWith('.doc'))) {
+      setResume(file);
     }
-    setIsGenerating(true);
-    setTimeout(() => {
-      const mockQuestions = Array(numQuestions).fill().map((_, i) => `
-        Question ${i + 1}: ${jobRole} related question based on your resume and job description.
-      `);
-      setQuestions(mockQuestions);
-      setIsGenerating(false);
-    }, 2000);
   };
-
-  // Start Recording
+  
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+  
+  // Generate AI questions
+  const generateQuestions = async () => {
+    if (!validate()) return;
+    
+    setIsGenerating(true);
+    setErrors({});
+    
+    try {
+      // Simulate AI processing
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Generate mock questions based on the input
+      const mockQuestions = [];
+      for (let i = 1; i <= numQuestions; i++) {
+        mockQuestions.push({
+          id: i,
+          text: generateQuestionText(i),
+          type: getQuestionType(i)
+        });
+      }
+      
+      setQuestions(mockQuestions);
+      setCurrentQuestionIndex(0);
+      setProgress(0);
+      setInterviewCompleted(false);
+      
+      // Scroll to interview section
+      setTimeout(() => {
+        interviewContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      
+    } catch (error) {
+      console.error("Error generating questions:", error);
+      alert("Failed to generate interview questions. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+  
+  // Helper function to generate question text based on inputs
+  const generateQuestionText = (index) => {
+    const questionTypes = [
+      `Explain a technical concept related to ${jobRole} that would be relevant for this position based on the job description.`,
+      `Describe a project from your resume that demonstrates your skills in ${jobRole}. What challenges did you face and how did you overcome them?`,
+      `Given your experience level as ${experienceLevel}, how would you approach a ${getDifficultyAdjective()} problem in ${jobRole}?`,
+      `The job description mentions ${extractKeyRequirement()}. Can you provide an example of how you've handled this in your previous work?`,
+      `Walk us through your thought process for solving a complex ${jobRole} problem.`,
+      `How would you explain ${getTechnicalConcept()} to a non-technical stakeholder?`,
+      `Describe a time when you had to learn a new technology quickly for a ${jobRole} project.`,
+      `What testing strategies would you use for a ${jobRole} application based on your experience?`,
+      `How do you stay updated with the latest trends and technologies in ${jobRole}?`,
+      `Describe a situation where you had to debug a difficult issue in a ${jobRole} project.`
+    ];
+    
+    return questionTypes[index % questionTypes.length] || `Question ${index}: ${jobRole} related question based on your resume and job description.`;
+  };
+  
+  // Helper functions for question generation
+  const getQuestionType = (index) => {
+    const types = ['technical', 'project', 'behavioral', 'scenario', 'problem-solving'];
+    return types[index % types.length];
+  };
+  
+  const getDifficultyAdjective = () => {
+    switch(difficulty) {
+      case 'easy': return 'basic';
+      case 'medium': return 'moderate';
+      case 'hard': return 'challenging';
+      default: return 'moderate';
+    }
+  };
+  
+  const extractKeyRequirement = () => {
+    // Simple extraction of key phrases from job description
+    const phrases = [
+      'team collaboration', 'problem-solving', 'leadership', 'technical skills',
+      'project management', 'communication', 'innovation', 'scalability'
+    ];
+    
+    for (const phrase of phrases) {
+      if (jobDescription.toLowerCase().includes(phrase)) {
+        return phrase;
+      }
+    }
+    
+    return 'key requirements';
+  };
+  
+  const getTechnicalConcept = () => {
+    const concepts = [
+      'microservices architecture', 'react hooks', 'database optimization',
+      'machine learning models', 'cloud computing', 'RESTful APIs',
+      'state management', 'CI/CD pipelines'
+    ];
+    return concepts[Math.floor(Math.random() * concepts.length)];
+  };
+  
+  // Start voice recording
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
-
+      
       mediaRecorder.ondataavailable = (e) => {
         audioChunksRef.current.push(e.data);
       };
-
+      
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        // Simulate transcription
-        setTranscript("This is a mock transcribed answer based on your recording.");
+        // In a real app, you would send this to a speech-to-text API
+        // For now, we'll simulate transcription
+        simulateTranscription();
       };
-
+      
       mediaRecorder.start();
       setIsRecording(true);
       setRecordingTime(0);
-
+      
       recordingIntervalRef.current = setInterval(() => {
         setRecordingTime((prev) => prev + 1);
       }, 1000);
+      
     } catch (err) {
+      console.error("Microphone access error:", err);
       alert('Microphone access denied. Please enable microphone permissions.');
     }
   };
-
-  // Stop Recording
+  
+  // Stop voice recording
   const stopRecording = () => {
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
@@ -122,39 +236,56 @@ const AIInterview = () => {
       setIsRecording(false);
     }
   };
-
-  // Evaluate Answer
+  
+  // Simulate transcription (replace with actual API call in production)
+  const simulateTranscription = () => {
+    setTimeout(() => {
+      setTranscript("This is a mock transcribed answer based on your voice recording. In a real application, this would be converted from your speech using a speech recognition API.");
+    }, 1000);
+  };
+  
+  // Evaluate the answer
   const evaluateAnswer = () => {
     // Simulate AI evaluation
-    setScores({
-      communication: Math.floor(Math.random() * 100),
-      technicalAccuracy: Math.floor(Math.random() * 100),
-      confidence: Math.floor(Math.random() * 100),
-      fluency: Math.floor(Math.random() * 100),
-      grammar: Math.floor(Math.random() * 100),
-      relevance: Math.floor(Math.random() * 100),
-      completeness: Math.floor(Math.random() * 100),
-    });
-
-    // Simulate AI feedback
-    setFeedback({
+    const mockScores = {
+      communication: Math.floor(Math.random() * 4) + 7, // 7-10
+      technicalAccuracy: Math.floor(Math.random() * 4) + 7, // 7-10
+      confidence: Math.floor(Math.random() * 4) + 7, // 7-10
+      completeness: Math.floor(Math.random() * 4) + 7, // 7-10
+    };
+    
+    setScores(mockScores);
+    
+    // Generate mock feedback
+    const mockFeedback = {
       strengths: [
-        "Clear communication of ideas.",
-        "Good technical depth in answers.",
+        "Clear communication of technical concepts",
+        "Good examples from your experience",
+        "Demonstrated problem-solving skills"
       ],
       improvements: [
-        "Work on confidence while speaking.",
-        "Improve grammar and fluency.",
+        "Provide more specific metrics when describing achievements",
+        "Work on explaining concepts more concisely",
+        "Include more details about technologies used"
       ],
-    });
-
-    // Simulate ideal answer
+    };
+    
+    setFeedback(mockFeedback);
+    
+    // Generate mock ideal answer
     setIdealAnswer(
-      "This is the AI-recommended answer for the question based on industry best practices."
+      `An ideal answer for this question would include:
+      1. A clear explanation of the concept/approach
+      2. Specific examples from your experience
+      3. Relevant technologies or tools you've used
+      4. Quantifiable results or outcomes if applicable
+      5. How this relates to the job requirements
+      
+      For ${jobRole} positions at this level, interviewers look for depth of knowledge, practical experience, and the ability to communicate complex ideas clearly.`
     );
   };
-
-  // Next Question
+  
+  // Navigate to next question
   const nextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -165,31 +296,107 @@ const AIInterview = () => {
       setIdealAnswer('');
     } else {
       // Interview completed
-      const summary = {
-        overallScore: Math.floor(Math.random() * 100),
-        confidence: Math.floor(Math.random() * 100),
-        communication: Math.floor(Math.random() * 100),
-        technicalSkills: Math.floor(Math.random() * 100),
-        fluency: Math.floor(Math.random() * 100),
-        atsReadiness: Math.floor(Math.random() * 100),
-        suggestions: [
-          "Practice more mock interviews.",
-          "Improve technical knowledge in key areas.",
-        ],
-      };
-      setInterviewSummary(summary);
-      setInterviewCompleted(true);
+      completeInterview();
     }
   };
-
-  // Reset Interview
+  
+  // Navigate to previous question
+  const previousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+      setProgress(((currentQuestionIndex) / questions.length) * 100);
+    }
+  };
+  
+  // Skip question
+  const skipQuestion = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      nextQuestion();
+    } else {
+      completeInterview();
+    }
+  };
+  
+  // Complete interview and generate final report
+  const completeInterview = () => {
+    // Generate final report
+    const finalReport = {
+      overallScore: Math.floor(Math.random() * 30) + 70, // 70-100
+      technicalScore: Math.floor(Math.random() * 30) + 70, // 70-100
+      communicationScore: Math.floor(Math.random() * 30) + 70, // 70-100
+      confidenceScore: Math.floor(Math.random() * 30) + 70, // 70-100
+      strengths: [
+        "Strong technical knowledge in key areas",
+        "Good communication skills",
+        "Relevant project experience"
+      ],
+      weaknesses: [
+        "Could provide more specific metrics",
+        "Some answers could be more concise",
+        "Could demonstrate more leadership examples"
+      ],
+      missingSkills: ["Advanced cloud architecture", "Kubernetes administration", "Performance optimization"],
+      recommendedTopics: [
+        "Cloud computing best practices",
+        "Advanced system design",
+        "Leadership and team management"
+      ],
+      interviewSummary: `Based on your interview performance, you demonstrated strong ${jobRole} skills with a good understanding of key concepts. Your answers showed relevant experience and technical knowledge. To improve, focus on providing more specific examples with quantifiable results and work on explaining complex ideas more concisely.`
+    };
+    
+    setInterviewSummary(finalReport);
+    setInterviewCompleted(true);
+    
+    // Save to interview history
+    saveInterviewToHistory(finalReport);
+  };
+  
+  // Save interview to history
+  const saveInterviewToHistory = (finalReport) => {
+    const newInterview = {
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      jobRole,
+      experienceLevel,
+      difficulty,
+      numQuestions,
+      overallScore: finalReport.overallScore,
+      technicalScore: finalReport.technicalScore,
+      communicationScore: finalReport.communicationScore,
+      confidenceScore: finalReport.confidenceScore,
+      duration: `${Math.floor(questions.length * 2.5)} minutes`, // Estimate
+      questions: questions.map(q => q.text),
+      // In a real app, you would store answers and other details
+    };
+    
+    // Update interview history
+    const updatedHistory = [newInterview, ...interviewHistory].slice(0, 10); // Keep last 10
+    setInterviewHistory(updatedHistory);
+    
+    // Save to localStorage
+    if (user?.id) {
+      localStorage.setItem(`interview_history_${user.id}`, JSON.stringify(updatedHistory));
+    }
+  };
+  
+  // Load interview history
+  const loadInterviewHistory = () => {
+    if (user?.id) {
+      const savedHistory = localStorage.getItem(`interview_history_${user.id}`);
+      if (savedHistory) {
+        setInterviewHistory(JSON.parse(savedHistory));
+      }
+    }
+  };
+  
+  // Reset interview
   const resetInterview = () => {
     setResume(null);
     setJobDescription('');
     setJobRole('');
     setExperienceLevel('');
     setDifficulty('');
-    setNumQuestions(5);
+    setNumQuestions(10);
     setQuestions([]);
     setCurrentQuestionIndex(0);
     setProgress(0);
@@ -198,129 +405,305 @@ const AIInterview = () => {
     setFeedback({ strengths: [], improvements: [] });
     setIdealAnswer('');
     setInterviewCompleted(false);
+    setInterviewSummary({
+      overallScore: 0,
+      technicalScore: 0,
+      communicationScore: 0,
+      confidenceScore: 0,
+      strengths: [],
+      weaknesses: [],
+      missingSkills: [],
+      recommendedTopics: [],
+      interviewSummary: '',
+    });
   };
-
+  
+  // Load interview history on component mount
+  useEffect(() => {
+    loadInterviewHistory();
+  }, [user]);
+  
   return (
-     <div className="ai-interview-container">
-       {/* Step 1: Upload Details */}
-       {!questions.length && !interviewCompleted && (
-           <div className="upload-details fade-in">
-            <h1>AI Interview Setup</h1>
-            <div className="form-group">
-              <label>Upload Resume (PDF/DOCX)</label>
-              <input type="file" accept=".pdf,.docx" onChange={handleResumeUpload} />
-            </div>
-            <div className="form-group">
-              <label>Job Description</label>
-              <textarea
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-                placeholder="Paste the job description here..."
-              />
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Job Role</label>
-                <select value={jobRole} onChange={(e) => setJobRole(e.target.value)}>
-                  <option value="">Select Role</option>
-                  <option value="Frontend Developer">Frontend Developer</option>
-                  <option value="Backend Developer">Backend Developer</option>
-                  <option value="Full Stack Developer">Full Stack Developer</option>
-                  <option value="Data Scientist">Data Scientist</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Experience Level</label>
-                <select value={experienceLevel} onChange={(e) => setExperienceLevel(e.target.value)}>
-                  <option value="">Select Experience</option>
-                  <option value="Fresher">Fresher</option>
-                  <option value="1 Year">1 Year</option>
-                  <option value="2+ Years">2+ Years</option>
-                </select>
-              </div>
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Difficulty</label>
-                <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
-                  <option value="">Select Difficulty</option>
-                  <option value="Easy">Easy</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Hard">Hard</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Number of Questions</label>
-                <select value={numQuestions} onChange={(e) => setNumQuestions(Number(e.target.value))}>
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={15}>15</option>
-                </select>
-              </div>
-            </div>
-            <button className="generate-button" onClick={generateQuestions} disabled={isGenerating}>
-              {isGenerating ? 'Generating...' : 'Generate AI Interview'}
-            </button>
+    <div className="ai-interview-container">
+      {/* Setup Section - Only shown when no questions are generated */}
+      {!questions.length && !interviewCompleted && (
+        <div className="interview-setup fade-in">
+          <div className="interview-setup__header">
+            <h1>AI Interview Preparation</h1>
+            <p>Upload your resume and provide job details to generate personalized interview questions</p>
           </div>
-        )}
-
-        {/* Step 2: AI Questions */}
-         {questions.length > 0 && !interviewCompleted && (
-           <div className="ai-questions fade-in">
-            <div className="progress-container">
-              <div className="progress-bar" style={{ width: `${progress}%` }}></div>
-            </div>
-            <h2>{questions[currentQuestionIndex]}</h2>
-
-            {/* Step 3: Voice Answer */}
-            <div className="voice-answer">
-              <div className="recording-controls">
-                {!isRecording ? (
-                  <button className="record-button" onClick={startRecording}>
-                    🎤 Record Answer
-                  </button>
-                ) : (
-                  <button className="stop-button" onClick={stopRecording}>
-                    ⏹️ Stop ({recordingTime}s)
-                  </button>
-                )}
+          
+          <div className="interview-setup__form">
+            {/* Resume Upload */}
+            <div className="form-section">
+              <div className="form-section__header">
+                <span className="form-section__icon">📄</span>
+                <h2>Resume</h2>
               </div>
-              {transcript && (
-                <div className="transcript-box">
-                  <h3>Your Answer:</h3>
-                  <textarea value={transcript} readOnly />
+              
+              {resume ? (
+                <div className="resume-uploaded">
+                  <div className="resume-uploaded__details">
+                    <span className="resume-uploaded__name">{resume.name}</span>
+                    <span className="resume-uploaded__size">{(resume.size / 1024).toFixed(1)} KB</span>
+                  </div>
+                  <button className="btn btn-secondary" onClick={() => setResume(null)}>Change Resume</button>
+                </div>
+              ) : (
+                <div className="resume-upload">
+                  <label htmlFor="resume-upload" className="resume-upload__label">
+                    <input
+                      id="resume-upload"
+                      type="file"
+                      accept=".pdf,.docx,.doc"
+                      onChange={handleResumeUpload}
+                      style={{ display: "none" }}
+                    />
+                    <div className="resume-upload__area"
+                         onDrop={handleDrop}
+                         onDragOver={handleDragOver}>
+                      <div className="resume-upload__icon">📁</div>
+                      <div className="resume-upload__title">Upload Resume</div>
+                      <div className="resume-upload__subtitle">Drag & drop your PDF/DOCX resume or click to browse</div>
+                      <div className="resume-upload__format">PDF or DOCX (Max 5MB)</div>
+                    </div>
+                  </label>
                 </div>
               )}
             </div>
-
-            {/* Step 4: AI Evaluation */}
-            {Object.keys(scores).length > 0 && (
-              <div className="ai-evaluation">
-                <h3>AI Evaluation</h3>
-                <div className="scores-grid">
-                  {Object.entries(scores).map(([key, value]) => (
-                    <div key={key} className="score-card">
-                      <h4>{key.replace(/([A-Z])/g, ' $1')}</h4>
-                      <div className="score-value">{value}</div>
-                    </div>
-                  ))}
+            
+            {/* Job Description */}
+            <div className="form-section">
+              <div className="form-section__header">
+                <span className="form-section__icon">📝</span>
+                <h2>Job Description</h2>
+              </div>
+              <div className="form-group">
+                <textarea
+                  className={`form-control ${errors.jobDescription ? 'error' : ''}`}
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                  placeholder="Paste the complete job description here..."
+                  rows={8}
+                />
+                {errors.jobDescription && <div className="error-message">{errors.jobDescription}</div>}
+              </div>
+            </div>
+            
+            {/* Interview Settings */}
+            <div className="form-section">
+              <div className="form-section__header">
+                <span className="form-section__icon">⚙️</span>
+                <h2>Interview Settings</h2>
+              </div>
+              
+              <div className="form-row">
+                {/* Job Role */}
+                <div className="form-group">
+                  <label>Job Role *</label>
+                  <select
+                    className={`form-control ${errors.jobRole ? 'error' : ''}`}
+                    value={jobRole}
+                    onChange={(e) => setJobRole(e.target.value)}
+                  >
+                    <option value="">Select Role</option>
+                    <option value="Frontend Developer">Frontend Developer</option>
+                    <option value="Backend Developer">Backend Developer</option>
+                    <option value="Full Stack Developer">Full Stack Developer</option>
+                    <option value="Data Scientist">Data Scientist</option>
+                    <option value="DevOps Engineer">DevOps Engineer</option>
+                    <option value="Mobile Developer">Mobile Developer</option>
+                    <option value="UI/UX Designer">UI/UX Designer</option>
+                    <option value="Product Manager">Product Manager</option>
+                    <option value="Data Analyst">Data Analyst</option>
+                    <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {errors.jobRole && <div className="error-message">{errors.jobRole}</div>}
+                </div>
+                
+                {/* Experience Level */}
+                <div className="form-group">
+                  <label>Experience Level *</label>
+                  <select
+                    className={`form-control ${errors.experienceLevel ? 'error' : ''}`}
+                    value={experienceLevel}
+                    onChange={(e) => setExperienceLevel(e.target.value)}
+                  >
+                    <option value="">Select Experience</option>
+                    <option value="Fresher/Entry Level">Fresher/Entry Level (0-1 year)</option>
+                    <option value="Junior">Junior (1-3 years)</option>
+                    <option value="Mid Level">Mid Level (3-5 years)</option>
+                    <option value="Senior">Senior (5+ years)</option>
+                    <option value="Lead">Lead/Manager (7+ years)</option>
+                  </select>
+                  {errors.experienceLevel && <div className="error-message">{errors.experienceLevel}</div>}
                 </div>
               </div>
-            )}
-
-            {/* Step 5: AI Feedback */}
-            {feedback.strengths?.length > 0 && (
-              <div className="ai-feedback">
-                <div className="feedback-section">
-                  <h3>What you did well</h3>
+              
+              <div className="form-row">
+                {/* Difficulty */}
+                <div className="form-group">
+                  <label>Difficulty *</label>
+                  <select
+                    className={`form-control ${errors.difficulty ? 'error' : ''}`}
+                    value={difficulty}
+                    onChange={(e) => setDifficulty(e.target.value)}
+                  >
+                    <option value="">Select Difficulty</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                  {errors.difficulty && <div className="error-message">{errors.difficulty}</div>}
+                </div>
+                
+                {/* Number of Questions */}
+                <div className="form-group">
+                  <label>Number of Questions</label>
+                  <select
+                    className="form-control"
+                    value={numQuestions}
+                    onChange={(e) => setNumQuestions(Number(e.target.value))}
+                  >
+                    <option value={5}>5 Questions</option>
+                    <option value={10}>10 Questions</option>
+                    <option value={15}>15 Questions</option>
+                    <option value={20}>20 Questions</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            {/* Generate Button */}
+            <div className="form-actions">
+              <button
+                className="btn btn-primary generate-btn"
+                onClick={generateQuestions}
+                disabled={isGenerating}
+              >
+                {isGenerating ? (
+                  <>
+                    <span className="spinner"></span> Generating Interview...
+                  </>
+                ) : (
+                  'Generate AI Interview Questions'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Interview Section - Shown when questions are generated */}
+      {questions.length > 0 && !interviewCompleted && (
+        <div className="interview-section fade-in" ref={interviewContainerRef}>
+          {/* Progress Bar */}
+          <div className="interview-progress">
+            <div className="progress-text">
+              Question {currentQuestionIndex + 1} of {questions.length}
+            </div>
+            <div className="progress-bar">
+              <div className="progress-bar__fill" style={{ width: `${progress}%` }}></div>
+            </div>
+          </div>
+          
+          {/* Question Card */}
+          <div className="question-card">
+            <div className="question-text">
+              {questions[currentQuestionIndex]?.text || "Loading question..."}
+            </div>
+            
+            {/* Answer Section */}
+            <div className="answer-section">
+              <div className="answer-methods">
+                {!isRecording ? (
+                  <button className="btn btn-primary" onClick={startRecording}>
+                    <span>🎤</span> Start Speaking
+                  </button>
+                ) : (
+                  <button className="btn btn-danger" onClick={stopRecording}>
+                    <span>⏹️</span> Stop ({recordingTime}s)
+                  </button>
+                )}
+                <button className="btn btn-secondary" onClick={() => {}}>
+                  <span>⌨️</span> Type Answer
+                </button>
+              </div>
+              
+              {/* Transcript Display */}
+              {transcript && (
+                <div className="transcript-box">
+                  <h4>Your Answer:</h4>
+                  <div className="transcript-text">{transcript}</div>
+                </div>
+              )}
+            </div>
+            
+            {/* Navigation Buttons */}
+            <div className="interview-navigation">
+              {currentQuestionIndex > 0 && (
+                <button className="btn btn-secondary" onClick={previousQuestion}>
+                  Previous
+                </button>
+              )}
+              
+              {Object.keys(scores).length === 0 ? (
+                <button className="btn btn-primary" onClick={evaluateAnswer}>
+                  Evaluate Answer
+                </button>
+              ) : (
+                <button className="btn btn-primary" onClick={nextQuestion}>
+                  {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Finish Interview'}
+                </button>
+              )}
+              
+              <button className="btn btn-outline" onClick={skipQuestion}>
+                Skip
+              </button>
+            </div>
+          </div>
+          
+          {/* AI Evaluation - Shown after evaluation */}
+          {Object.keys(scores).length > 0 && (
+            <div className="evaluation-section">
+              <div className="evaluation-header">
+                <h3>AI Evaluation</h3>
+              </div>
+              
+              {/* Scores */}
+              <div className="scores-grid">
+                <div className="score-card">
+                  <div className="score-label">Communication</div>
+                  <div className="score-value">{scores.communication}/10</div>
+                </div>
+                <div className="score-card">
+                  <div className="score-label">Technical Accuracy</div>
+                  <div className="score-value">{scores.technicalAccuracy}/10</div>
+                </div>
+                <div className="score-card">
+                  <div className="score-label">Confidence</div>
+                  <div className="score-value">{scores.confidence}/10</div>
+                </div>
+                <div className="score-card">
+                  <div className="score-label">Completeness</div>
+                  <div className="score-value">{scores.completeness}/10</div>
+                </div>
+              </div>
+              
+              {/* Feedback */}
+              <div className="feedback-grid">
+                <div className="feedback-card">
+                  <h4>Strengths</h4>
                   <ul>
                     {feedback.strengths.map((strength, i) => (
                       <li key={i}>{strength}</li>
                     ))}
                   </ul>
                 </div>
-                <div className="feedback-section">
-                  <h3>Needs Improvement</h3>
+                
+                <div className="feedback-card">
+                  <h4>Areas for Improvement</h4>
                   <ul>
                     {feedback.improvements.map((improvement, i) => (
                       <li key={i}>{improvement}</li>
@@ -328,94 +711,166 @@ const AIInterview = () => {
                   </ul>
                 </div>
               </div>
-            )}
-
-            {/* Step 6: Ideal Answer */}
-            {idealAnswer && (
-              <div className="ideal-answer">
-                <h3>AI Recommended Answer</h3>
-                <p>{idealAnswer}</p>
+              
+              {/* Ideal Answer */}
+              <div className="ideal-answer-card">
+                <h4>AI Recommended Answer</h4>
+                <div className="ideal-answer-text">{idealAnswer}</div>
               </div>
-            )}
-
-            {/* Step 7: Next Question */}
-            <div className="next-question">
-              {Object.keys(scores).length === 0 ? (
-                <button className="evaluate-button" onClick={evaluateAnswer}>
-                  Evaluate Answer
-                </button>
-              ) : (
-                <button className="next-button" onClick={nextQuestion}>
-                  {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Finish Interview'}
-                </button>
-              )}
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Final Report - Shown when interview is completed */}
+      {interviewCompleted && (
+        <div className="final-report fade-in">
+          <div className="final-report__header">
+            <h1>Interview Complete!</h1>
+            <p>Here's your personalized performance analysis</p>
+          </div>
+          
+          {/* Overall Score */}
+          <div className="final-score">
+            <div className="score-circle">
+              <div className="score-value">{interviewSummary.overallScore}</div>
+              <div className="score-label">Overall Score</div>
             </div>
           </div>
-        )}
-
-        {/* Final Result Page */}
-         {interviewCompleted && (
-           <div className="final-result fade-in">
-            <h1>Interview Summary</h1>
-            <div className="summary-cards">
-              <div className="summary-card">
-                <h2>Overall Score</h2>
-                <div className="circular-progress">
-                  <span>{interviewSummary.overallScore}</span>
-                </div>
-              </div>
-              {Object.entries(interviewSummary).map(([key, value]) => (
-                key !== 'overallScore' && key !== 'suggestions' && (
-                  <div key={key} className="summary-card">
-                    <h3>{key.replace(/([A-Z])/g, ' $1')}</h3>
-                    <div className="score-value">{value}</div>
-                  </div>
-                )
-              ))}
+          
+          {/* Detailed Scores */}
+          <div className="score-details">
+            <div className="score-card">
+              <div className="score-label">Technical Score</div>
+              <div className="score-value">{interviewSummary.technicalScore}</div>
             </div>
-            <div className="ai-suggestions">
-              <h3>AI Suggestions</h3>
+            <div className="score-card">
+              <div className="score-label">Communication</div>
+              <div className="score-value">{interviewSummary.communicationScore}</div>
+            </div>
+            <div className="score-card">
+              <div className="score-label">Confidence</div>
+              <div className="score-value">{interviewSummary.confidenceScore}</div>
+            </div>
+          </div>
+          
+          {/* Analysis Cards */}
+          <div className="analysis-grid">
+            {/* Strengths */}
+            <div className="analysis-card">
+              <div className="analysis-card__header">
+                <span>💪</span>
+                <h3>Strengths</h3>
+              </div>
               <ul>
-                {interviewSummary.suggestions.map((suggestion, i) => (
-                  <li key={i}>{suggestion}</li>
+                {interviewSummary.strengths.map((strength, i) => (
+                  <li key={i}>{strength}</li>
                 ))}
               </ul>
             </div>
-            <div className="final-actions">
-              <button className="download-button">Download Interview Report (PDF)</button>
-              <button className="save-button">Save Interview History</button>
-              <button className="retry-button" onClick={resetInterview}>Retry Interview</button>
+            
+            {/* Weaknesses */}
+            <div className="analysis-card">
+              <div className="analysis-card__header">
+                <span>🔧</span>
+                <h3>Areas for Improvement</h3>
+              </div>
+              <ul>
+                {interviewSummary.weaknesses.map((weakness, i) => (
+                  <li key={i}>{weakness}</li>
+                ))}
+              </ul>
             </div>
-            <div className="interview-history">
-              <h3>Previous Interviews</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Job Role</th>
-                    <th>Score</th>
-                    <th>Duration</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {interviewHistory.map((interview, i) => (
-                    <tr key={i}>
-                      <td>{interview.date}</td>
-                      <td>{interview.jobRole}</td>
-                      <td>{interview.score}</td>
-                      <td>{interview.duration}</td>
-                      <td>
-                        <button className="view-button">View Report</button>
-                        <button className="retry-button">Retry</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            
+            {/* Missing Skills */}
+            <div className="analysis-card">
+              <div className="analysis-card__header">
+                <span>🎯</span>
+                <h3>Missing Skills</h3>
+              </div>
+              <ul>
+                {interviewSummary.missingSkills.map((skill, i) => (
+                  <li key={i}>{skill}</li>
+                ))}
+              </ul>
+            </div>
+            
+            {/* Recommended Topics */}
+            <div className="analysis-card">
+              <div className="analysis-card__header">
+                <span>📚</span>
+                <h3>Recommended Topics</h3>
+              </div>
+              <ul>
+                {interviewSummary.recommendedTopics.map((topic, i) => (
+                  <li key={i}>{topic}</li>
+                ))}
+              </ul>
             </div>
           </div>
-        )}
+          
+          {/* Interview Summary */}
+          <div className="summary-card">
+            <div className="summary-card__header">
+              <span>📋</span>
+              <h3>Interview Summary</h3>
+            </div>
+            <div className="summary-text">
+              {interviewSummary.interviewSummary}
+            </div>
+          </div>
+          
+          {/* Actions */}
+          <div className="final-actions">
+            <button className="btn btn-primary" onClick={() => {}}>
+              <span>📥</span> Download Report
+            </button>
+            <button className="btn btn-secondary" onClick={resetInterview}>
+              <span>🔄</span> New Interview
+            </button>
+            <button className="btn btn-outline" onClick={() => setShowHistory(!showHistory)}>
+              <span>📊</span> View History
+            </button>
+          </div>
+          
+          {/* Interview History */}
+          {showHistory && (
+            <div className="interview-history">
+              <div className="interview-history__header">
+                <h3>Your Interview History</h3>
+              </div>
+              {interviewHistory.length > 0 ? (
+                <div className="history-table">
+                  <div className="history-table__header">
+                    <div>Date</div>
+                    <div>Role</div>
+                    <div>Score</div>
+                    <div>Duration</div>
+                    <div>Actions</div>
+                  </div>
+                  {interviewHistory.map((interview) => (
+                    <div className="history-table__row" key={interview.id}>
+                      <div>{new Date(interview.date).toLocaleDateString()}</div>
+                      <div>{interview.jobRole}</div>
+                      <div>{interview.overallScore}</div>
+                      <div>{interview.duration}</div>
+                      <div>
+                        <button className="btn btn-small btn-outline">View</button>
+                        <button className="btn btn-small btn-outline">Retry</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="history-empty">
+                  <p>No previous interviews found.</p>
+                  <p>Complete an interview to see your history here.</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
