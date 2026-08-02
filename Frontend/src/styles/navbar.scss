@@ -1,212 +1,329 @@
-// ── Navbar Styles ────────────────────────────────────────────────────────────
-@use "sass:color";
+// ── Variables ────────────────────────────────────────────────────────────────
+$bg-nav: #FFFFFF;
+$bg-nav-scrolled: rgba(255, 255, 255, 0.95);
+$text-primary: #1F2937;
+$text-muted: #6B7280;
+$text-light: #FFFFFF;
+$accent-pink: #EC4899;
+$accent-purple: #8B5CF6;
+$border-color: #F3F4F6;
+$font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-$navbar-bg: #ffffff;
-$navbar-border: #e5e7eb;
-$text-primary: #1f2937;
-$text-secondary: #6b7280;
-$accent: #ec4899;
-$accent-light: #f472b6;
-$bg-hover: #f9fafb;
+// ── Animations ───────────────────────────────────────────────────────────────
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-// ── Navbar Container ─────────────────────────────────────────────────────────
+@keyframes underlineGrow {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+// ── Base Styles ───────────────────────────────────────────────────────────────
 .navbar {
+  background: $bg-nav;
+  color: $text-primary;
+  font-family: $font-stack;
+  padding: 0 2rem;
   position: sticky;
   top: 0;
-  z-index: 100;
-  background-color: $navbar-bg;
-  border-bottom: 1px solid $navbar-border;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  backdrop-filter: blur(12px);
+  animation: fadeIn 0.4s ease-out;
 
   &__container {
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0 1.5rem;
-    height: 70px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 20px;
   }
 
-  // ── Brand ─────────────────────────────────────────────────────────────────
   &__brand {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 12px;
     text-decoration: none;
-    transition: opacity 0.2s ease;
+    color: $text-primary;
+    transition: transform 0.3s ease;
 
     &:hover {
-      opacity: 0.8;
+      transform: translateY(-1px);
     }
   }
 
   &__logo-icon {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
-    border-radius: 0.75rem;
+    background: linear-gradient(135deg, $accent-pink, $accent-purple);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 1.25rem;
-    color: white;
+    font-size: 1.5rem;
+    color: $text-light;
+    flex-shrink: 0;
   }
 
   &__logo-text {
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.8px;
     color: $text-primary;
-    letter-spacing: -0.5px;
   }
 
-  // ── Mobile Toggle ─────────────────────────────────────────────────────────
   &__mobile-toggle {
     display: none;
-    flex-direction: column;
-    gap: 5px;
-    background: none;
+    background: transparent;
     border: none;
+    color: $text-primary;
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 10px;
+    border-radius: 8px;
+    z-index: 1002;
+    transition: all 0.3s ease;
 
-    @media (max-width: 768px) {
-      display: flex;
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  &__mobile-toggle--active {
+    .navbar__hamburger {
+      background: transparent;
+      
+      &::before {
+        transform: rotate(45deg);
+        top: 0;
+      }
+      
+      &::after {
+        transform: rotate(-45deg);
+        bottom: 0;
+      }
     }
   }
 
   &__hamburger {
+    display: block;
     width: 24px;
     height: 2px;
-    background-color: $text-primary;
-    border-radius: 2px;
+    background: $text-primary;
+    position: relative;
     transition: all 0.3s ease;
 
     &::before,
     &::after {
       content: "";
-      display: block;
+      position: absolute;
       width: 24px;
       height: 2px;
-      background-color: $text-primary;
-      border-radius: 2px;
+      background: $text-primary;
+      left: 0;
       transition: all 0.3s ease;
-      margin-top: 5px;
+    }
+
+    &::before {
+      top: -8px;
+    }
+
+    &::after {
+      bottom: -8px;
     }
   }
 
-  // ── Menu ───────────────────────────────────────────────────────────────────
   &__menu {
     display: flex;
     align-items: center;
-
-    @media (max-width: 768px) {
-      position: absolute;
-      top: 70px;
-      left: 0;
-      right: 0;
-      background-color: $navbar-bg;
-      flex-direction: column;
-      padding: 1.5rem;
-      border-bottom: 1px solid $navbar-border;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-
-      &--active {
-        max-height: 500px;
-      }
-    }
+    gap: 2rem;
+    height: 100%;
   }
 
   &__nav-items {
     display: flex;
     align-items: center;
     gap: 2rem;
-
-    @media (max-width: 768px) {
-      flex-direction: column;
-      width: 100%;
-      gap: 1rem;
-    }
+    height: 100%;
   }
 
-  // ── Links ──────────────────────────────────────────────────────────────────
   &__link {
-    color: $text-primary;
+    color: $text-muted;
     text-decoration: none;
-    font-weight: 500;
     font-size: 0.95rem;
-    transition: all 0.2s ease;
+    font-weight: 600;
+    letter-spacing: 0.2px;
     position: relative;
+    padding: 8px 0;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    height: 100%;
 
     &:hover {
-      color: $accent;
+      color: $accent-pink;
+      transform: translateY(-1px);
+      
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, $accent-pink, $accent-purple);
+        animation: underlineGrow 0.3s ease-out forwards;
+      }
     }
 
-    &--cta {
-      color: $accent;
-      font-weight: 600;
-    }
-
-    @media (max-width: 768px) {
-      width: 100%;
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-
-      &:hover {
-        background-color: $bg-hover;
+    &--active {
+      color: $text-primary;
+      font-weight: 700;
+      
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, $accent-pink, $accent-purple);
       }
     }
   }
 
-  // ── Buttons ────────────────────────────────────────────────────────────────
   &__button {
-    padding: 0.625rem 1.25rem;
-    border: none;
-    border-radius: 0.625rem;
-    font-weight: 600;
+    padding: 12px 26px;
+    border-radius: 12px;
     font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
     &--primary {
-      background: linear-gradient(135deg, $accent 0%, $accent-light 100%);
-      color: white;
+      background: linear-gradient(135deg, $accent-pink, $accent-purple);
+      color: $text-light;
+      box-shadow: 0 4px 12px rgba($accent-pink, 0.3);
 
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba($accent, 0.3);
-      }
-
-      &:active {
-        transform: translateY(0);
+        box-shadow: 0 6px 16px rgba($accent-pink, 0.4);
       }
     }
 
     &--secondary {
-      background-color: transparent;
+      background: transparent;
       color: $text-primary;
-      border: 2px solid $text-primary;
+      border: 1px solid $border-color;
 
       &:hover {
-        background-color: $bg-hover;
-      }
-
-      @media (max-width: 768px) {
-        width: 100%;
+        background: rgba(0, 0, 0, 0.05);
       }
     }
+  }
 
-    @media (max-width: 768px) {
-      width: 100%;
-      padding: 0.75rem 1rem;
+  &--scrolled {
+    background: $bg-nav-scrolled;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    height: 70px;
+    
+    .navbar__logo-text {
+      font-size: 1.4rem;
+    }
+  }
 
-      &--primary {
-        margin-top: 0.5rem;
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    animation: fadeIn 0.3s ease-out;
+  }
+}
+
+// ── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 0 1rem;
+    
+    &__container {
+      padding: 0 10px;
+    }
+    
+    &__nav-items {
+      gap: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    height: 70px;
+    
+    &__logo-text {
+      font-size: 1.3rem;
+    }
+    
+    &__mobile-toggle {
+      display: block;
+    }
+    
+    &__menu {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 85%;
+      max-width: 320px;
+      height: 100vh;
+      background: $bg-nav;
+      flex-direction: column;
+      padding: 4rem 2rem 2rem;
+      transition: right 0.3s ease;
+      gap: 1.5rem;
+      z-index: 1002;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+
+      &--active {
+        right: 0;
       }
+    }
+    
+    &__nav-items {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+      height: auto;
+    }
+    
+    &__link {
+      font-size: 1.1rem;
+      padding: 10px 0;
+      height: auto;
+      
+      &::after {
+        bottom: 0;
+      }
+    }
+    
+    &__button {
+      width: 100%;
+      justify-content: center;
     }
   }
 }
