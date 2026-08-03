@@ -44,8 +44,7 @@ const Dashboard = () => {
           Create Your Custom <span className="highlight">Interview Plan</span>
         </h1>
         <p>
-          Let our AI analyze the job requirements and your unique profile to
-          build a winning strategy.
+          Let our AI analyze the job requirements and your unique profile to create a personalized interview strategy.
         </p>
       </header>
 
@@ -74,12 +73,15 @@ const Dashboard = () => {
               <h2>Target Job Description</h2>
               <span className="badge badge--required">Required</span>
             </div>
+            <label className="panel__label">Job Description</label>
             <textarea
               onChange={(e) => {
                 setJobDescription(e.target.value);
+                e.target.nextElementSibling.textContent = `${e.target.value.length} / 5000 chars`;
               }}
               className="panel__textarea"
-              placeholder={`Paste the full job description here...\ne.g. 'Senior Frontend Engineer at Google requires proficiency in React, TypeScript, and large-scale system design...'`}
+              placeholder={`Paste the full job description here...
+Example: 'Senior Frontend Engineer at Google requires proficiency in React, TypeScript, and large-scale system design...'`}
               maxLength={5000}
             />
             <div className="char-counter">0 / 5000 chars</div>
@@ -118,9 +120,11 @@ const Dashboard = () => {
                 id="self-description"
                 onChange={(e) => {
                   setSelfDescription(e.target.value);
+                  e.target.nextElementSibling.textContent = `${e.target.value.length} / 5000 chars`;
                 }}
                 className="panel__textarea"
-                placeholder={`Share your experience, skills, and background...\ne.g. '5 years as Frontend Engineer with expertise in React and TypeScript'`}
+                placeholder={`Share your experience, skills, and background...
+Example: '5 years as Frontend Engineer with expertise in React, TypeScript, and building scalable web applications.'`}
                 maxLength={5000}
               />
               <div className="char-counter">0 / 5000 chars</div>
@@ -158,9 +162,9 @@ const Dashboard = () => {
                         <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
                       </svg>
                     </span>
-                    <p className="upload-box__text">Drag & Drop your file here</p>
+                    <p className="upload-box__text">Drag & Drop your Resume</p>
                     <p className="upload-box__subtext">or <strong>Browse File</strong></p>
-                    <p className="upload-box__formats">PDF &bull; DOC &bull; DOCX</p>
+                    <p className="upload-box__formats">PDF • DOC • DOCX</p>
                   </>
                 )}
                 <input
