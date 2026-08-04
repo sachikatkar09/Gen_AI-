@@ -4,6 +4,7 @@ $bg-card: #1e1b4b;
 $bg-glass: rgba(255, 255, 255, 0.05);
 $text-primary: #f8fafc;
 $text-muted: #cbd5e1;
+$text-secondary: #9ca3af;
 $accent-pink: #ec4899;
 $accent-purple: #a855f7;
 $border-color: rgba(255, 255, 255, 0.1);
@@ -40,6 +41,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
   padding: 2rem;
   position: relative;
   overflow-x: hidden;
+  font-size: 16px; // Base font size
 
   &::before {
     content: "";
@@ -130,12 +132,14 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
   background: $bg-glass;
   color: $text-primary;
   font-family: $font-stack;
-  font-size: 0.95rem;
+  font-size: 1rem; // 16px
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  min-height: 50px;
 
   &::placeholder {
-    color: rgba($text-muted, 0.6);
+    color: rgba($text-secondary, 0.7); // 15px equivalent
+    font-size: 0.9375rem; // 15px
   }
 
   &:focus {
@@ -159,12 +163,14 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 .form-control.textarea {
   min-height: 120px;
   resize: vertical;
+  padding: 1rem 1.25rem;
+  line-height: 1.6;
 }
 
 // Error Messages
 .error-message {
   color: #ef4444;
-  font-size: 0.8rem;
+  font-size: 0.875rem; // 14px
   margin-top: 0.25rem;
 }
 
@@ -173,7 +179,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
   padding: 0.75rem 1.5rem;
   border-radius: 10px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9375rem; // 15px
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
@@ -182,6 +188,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
   gap: 0.5rem;
   border: none;
   min-width: 120px;
+  height: 48px;
 
   &:disabled {
     opacity: 0.6;
@@ -232,7 +239,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 
 .btn-small {
   padding: 0.5rem 1rem;
-  font-size: 0.85rem;
+  font-size: 0.875rem; // 14px
 }
 
 // Spinner
@@ -281,19 +288,23 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .resume-upload__title {
-  font-size: 1.1rem;
+  font-size: 1.375rem; // 22px
   font-weight: 600;
   color: $text-primary;
+  margin: 0;
 }
 
 .resume-upload__subtitle {
-  font-size: 0.9rem;
+  font-size: 1rem; // 16px
   color: $text-muted;
+  margin: 0;
 }
 
 .resume-upload__format {
-  font-size: 0.8rem;
-  color: rgba($text-muted, 0.7);
+  font-size: 0.875rem; // 14px
+  color: $text-secondary;
+  margin: 0;
+  margin-top: 0.5rem;
 }
 
 .resume-uploaded {
@@ -316,10 +327,11 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 .resume-uploaded__name {
   font-weight: 600;
   color: $text-primary;
+  font-size: 1rem; // 16px
 }
 
 .resume-uploaded__size {
-  font-size: 0.8rem;
+  font-size: 0.875rem; // 14px
   color: $text-muted;
 }
 
@@ -333,23 +345,70 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
+.interview-setup__header {
+  margin-bottom: 1.5rem;
+}
+
 .interview-setup__header h1 {
-  font-size: 2rem;
+  font-size: 2.25rem; // 36px
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+  color: $text-primary;
+  
+  @media (max-width: 768px) {
+    font-size: 1.75rem; // 28px
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.5rem; // 24px
+  }
 }
 
 .interview-setup__header p {
   color: $text-muted;
-  font-size: 1rem;
+  font-size: 1.125rem; // 18px
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+// Form Section Headers
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.form-section__header h2 {
+  font-size: 1.75rem; // 28px
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+// Form Labels
+.panel__label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1rem; // 16px
+  font-weight: 600;
+  color: $text-muted;
+  letter-spacing: -0.2px;
 }
 
 // Generate Button
 .generate-btn {
   width: 100%;
   padding: 1rem;
-  font-size: 1rem;
+  font-size: 1rem; // 16px
   margin-top: 1rem;
+  height: 56px;
 }
 
 // Interview Section
@@ -367,7 +426,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .progress-text {
-  font-size: 0.9rem;
+  font-size: 0.875rem; // 14px
   color: $text-muted;
   margin-bottom: 0.5rem;
   text-align: right;
@@ -397,7 +456,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .question-text {
-  font-size: 1.2rem;
+  font-size: 1.25rem; // 20px
   font-weight: 600;
   color: $text-primary;
   line-height: 1.6;
@@ -428,14 +487,14 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .transcript-box h4 {
-  font-size: 1rem;
+  font-size: 1rem; // 16px
   font-weight: 600;
   margin-bottom: 0.75rem;
   color: $text-primary;
 }
 
 .transcript-text {
-  font-size: 0.95rem;
+  font-size: 0.9375rem; // 15px
   color: $text-muted;
   line-height: 1.6;
 }
@@ -454,7 +513,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .evaluation-header h3 {
-  font-size: 1.3rem;
+  font-size: 1.25rem; // 20px
   font-weight: 600;
   margin-bottom: 1.5rem;
   color: $text-primary;
@@ -477,7 +536,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .score-label {
-  font-size: 0.8rem;
+  font-size: 0.875rem; // 14px
   color: $text-muted;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
@@ -485,7 +544,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .score-value {
-  font-size: 1.5rem;
+  font-size: 1.5rem; // 24px
   font-weight: 700;
   color: $accent-pink;
 }
@@ -506,7 +565,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .feedback-card h4 {
-  font-size: 1rem;
+  font-size: 1rem; // 16px
   font-weight: 600;
   margin-bottom: 1rem;
   color: $text-primary;
@@ -522,7 +581,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .feedback-card li {
-  font-size: 0.9rem;
+  font-size: 0.9375rem; // 15px
   color: $text-muted;
   margin-bottom: 0.5rem;
   padding-left: 1.2rem;
@@ -546,14 +605,14 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .ideal-answer-card h4 {
-  font-size: 1rem;
+  font-size: 1rem; // 16px
   font-weight: 600;
   margin-bottom: 1rem;
   color: $text-primary;
 }
 
 .ideal-answer-text {
-  font-size: 0.95rem;
+  font-size: 0.9375rem; // 15px
   color: $text-muted;
   line-height: 1.6;
   white-space: pre-line;
@@ -569,16 +628,21 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .final-report__header h1 {
-  font-size: 2rem;
+  font-size: 2rem; // 32px
   font-weight: 700;
   margin-bottom: 0.5rem;
   text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 1.75rem; // 28px
+  }
 }
 
 .final-report__header p {
   color: $text-muted;
   text-align: center;
   margin-bottom: 2rem;
+  font-size: 1rem; // 16px
 }
 
 // Final Score
@@ -615,7 +679,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 
 .score-value {
   position: relative;
-  font-size: 2.5rem;
+  font-size: 2.5rem; // 40px
   font-weight: 700;
   color: $text-primary;
   z-index: 1;
@@ -623,7 +687,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 
 .score-label {
   position: relative;
-  font-size: 1rem;
+  font-size: 0.875rem; // 14px
   color: $text-muted;
   z-index: 1;
 }
@@ -634,6 +698,18 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
+}
+
+.score-details .score-card {
+  padding: 1.25rem 1rem;
+}
+
+.score-details .score-label {
+  font-size: 0.875rem; // 14px
+}
+
+.score-details .score-value {
+  font-size: 1.75rem; // 28px
 }
 
 // Analysis Grid
@@ -659,7 +735,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .analysis-card h3 {
-  font-size: 1rem;
+  font-size: 1.125rem; // 18px
   font-weight: 600;
   color: $text-primary;
 }
@@ -671,7 +747,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .analysis-card li {
-  font-size: 0.9rem;
+  font-size: 0.9375rem; // 15px
   color: $text-muted;
   margin-bottom: 0.5rem;
   padding-left: 1.2rem;
@@ -703,7 +779,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .summary-text {
-  font-size: 0.95rem;
+  font-size: 0.9375rem; // 15px
   color: $text-muted;
   line-height: 1.6;
 }
@@ -727,7 +803,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
 }
 
 .interview-history__header h3 {
-  font-size: 1.2rem;
+  font-size: 1.25rem; // 20px
   font-weight: 600;
   margin-bottom: 1.5rem;
   color: $text-primary;
@@ -756,9 +832,12 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
   color: $text-primary;
   background: rgba(255, 255, 255, 0.03);
   border-radius: 8px 8px 0 0;
+  font-size: 0.875rem; // 14px
 }
 
 .history-table__row {
+  font-size: 0.9375rem; // 15px
+  
   &:nth-child(even) {
     background: rgba(255, 255, 255, 0.02);
   }
@@ -768,6 +847,7 @@ $font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, san
   text-align: center;
   padding: 2rem;
   color: $text-muted;
+  font-size: 0.9375rem; // 15px
 }
 
 // Responsive Adjustments
