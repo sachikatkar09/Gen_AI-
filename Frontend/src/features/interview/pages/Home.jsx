@@ -35,11 +35,28 @@ const Home = () => {
       {/* Page Header */}
       <header className="page-header">
         <h1>
-          Create Your Custom <span className="highlight">Interview Plan</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 2a10 10 0 1 0 10 10c0-4.42-3.58-8-8-8z" />
+            <path d="M12 2a10 10 0 0 0-3.32 19.27" />
+            <path d="M12 22a10 10 0 0 0 3.32-19.27" />
+            <path d="M2 12h20" />
+            <path d="M22 12a10 10 0 0 0-10-10" />
+            <path d="M12 12a10 10 0 0 0-10 10" />
+          </svg>
+          AI Interview Preparation
         </h1>
         <p>
-          Let our AI analyze the job requirements and your unique profile to
-          build a winning strategy.
+          Upload your resume and job description to generate personalized AI interview questions based on your profile.
         </p>
       </header>
 
@@ -71,9 +88,17 @@ const Home = () => {
             <textarea
               onChange={(e) => {
                 setJobDescription(e.target.value);
+                e.target.nextElementSibling.textContent = `${e.target.value.length} / 5000 chars`;
               }}
               className="panel__textarea"
-              placeholder={`Paste the full job description here...\ne.g. 'Senior Frontend Engineer at Google requires proficiency in React, TypeScript, and large-scale system design...'`}
+              placeholder={`Paste the job description here...
+
+Example:
+• Senior Frontend Engineer at Google
+• 5+ years of experience in React, TypeScript, and large-scale systems
+• Proficiency in state management (Redux, Context API)
+• Experience with testing frameworks (Jest, Cypress)
+• Knowledge of CI/CD pipelines and cloud services (AWS, GCP)`}
               maxLength={5000}
             />
             <div className="char-counter">0 / 5000 chars</div>
@@ -110,7 +135,7 @@ const Home = () => {
                 Upload Resume
                 <span className="badge badge--best">Best Results</span>
               </label>
-              <label className="dropzone" htmlFor="resume">
+              <label className={`dropzone ${resumeInputRef.current?.files[0] ? 'dropzone--success' : ''}`} htmlFor="resume">
                 <span className="dropzone__icon">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -123,15 +148,46 @@ const Home = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   >
-                    <polyline points="16 16 12 12 8 16" />
-                    <line x1="12" y1="12" x2="12" y2="21" />
-                    <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
                 </span>
-                <p className="dropzone__title">
-                  Click to upload or drag &amp; drop
-                </p>
-                <p className="dropzone__subtitle">PDF or DOCX (Max 5MB)</p>
+                {!resumeInputRef.current?.files[0] ? (
+                  <>
+                    <p className="dropzone__title">Drag & Drop Resume</p>
+                    <p className="dropzone__subtitle">PDF or DOCX (Max 5MB)</p>
+                    <p className="dropzone__browse">or Browse Files</p>
+                  </>
+                ) : (
+                  <div className="file-info">
+                    <svg className="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" />
+                      <path d="M14 2v6h6" />
+                      <path d="M12 12v6" />
+                      <path d="M9 12v6" />
+                      <path d="M15 12v6" />
+                    </svg>
+                    <span className="file-name">{resumeInputRef.current.files[0].name}</span>
+                    <div className="file-actions">
+                      <button type="button" className="remove" onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        resumeInputRef.current.value = '';
+                        e.target.closest('.dropzone').classList.remove('dropzone--success');
+                      }}>
+                        Remove
+                      </button>
+                      <button type="button" onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        resumeInputRef.current.click();
+                      }}>
+                        Replace
+                      </button>
+                    </div>
+                  </div>
+                )}
                 <input
                   ref={resumeInputRef}
                   hidden
@@ -139,6 +195,11 @@ const Home = () => {
                   id="resume"
                   name="resume"
                   accept=".pdf,.docx"
+                  onChange={(e) => {
+                    if (e.target.files[0]) {
+                      e.target.closest('.dropzone').classList.add('dropzone--success');
+                    }
+                  }}
                 />
               </label>
             </div>
@@ -202,22 +263,53 @@ const Home = () => {
           </div>
         </div>
 
+        {/* Progress Steps */}
+        <div className="progress-steps">
+          <div className="step active">
+            <div className="step__number">1</div>
+            <div className="step__label">Upload Resume</div>
+          </div>
+          <div className="step__divider"></div>
+          <div className="step">
+            <div className="step__number">2</div>
+            <div className="step__label">Add Job Description</div>
+          </div>
+          <div className="step__divider"></div>
+          <div className="step">
+            <div className="step__number">3</div>
+            <div className="step__label">Generate Questions</div>
+          </div>
+          <div className="step__divider"></div>
+          <div className="step">
+            <div className="step__number">4</div>
+            <div className="step__label">Start Interview</div>
+          </div>
+        </div>
+
         {/* Card Footer */}
         <div className="interview-card__footer">
           <span className="footer-info">
             AI-Powered Strategy Generation &bull; Approx 30s
           </span>
-          <button onClick={handleGenerateReport} className="generate-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
-            </svg>
-            Generate My Interview Strategy
+          <button
+            onClick={handleGenerateReport}
+            className="generate-btn"
+            disabled={!jobDescription || (!resumeInputRef.current?.files[0] && !selfDescription)}
+          >
+            {loading ? (
+              <div className="spinner"></div>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+              </svg>
+            )}
+            Generate AI Interview
           </button>
         </div>
       </div>
