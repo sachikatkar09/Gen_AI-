@@ -137,6 +137,16 @@ const AIInterview = () => {
     }
   };
   
+  // Update progress steps based on current state
+  const getProgressStepClass = (step) => {
+    if (questions.length > 0 || interviewCompleted) {
+      return 'completed';
+    }
+    if (step === 1 && !questions.length && !interviewCompleted) return 'active';
+    if (step === 2 && jobDescription.trim()) return 'active';
+    return '';
+  };
+  
   // Helper function to generate question text based on inputs
   const generateQuestionText = (index) => {
     const questionTypes = [
@@ -430,7 +440,27 @@ const AIInterview = () => {
         <div className="interview-setup fade-in">
           <div className="interview-setup__header">
             <h1>AI Interview Preparation</h1>
-            <p>Upload your resume and provide job details to generate personalized interview questions</p>
+            <p>Upload your resume and provide job details to generate a personalized interview simulation with AI-powered feedback</p>
+          </div>
+          
+          {/* Progress Steps */}
+          <div className="progress-steps">
+            <div className={`progress-step ${getProgressStepClass(1)}`}>
+              <div className="progress-step__icon">1</div>
+              <div className="progress-step__label">Upload Resume</div>
+            </div>
+            <div className={`progress-step ${getProgressStepClass(2)}`}>
+              <div className="progress-step__icon">2</div>
+              <div className="progress-step__label">Add Job Description</div>
+            </div>
+            <div className={`progress-step ${getProgressStepClass(3)}`}>
+              <div className="progress-step__icon">3</div>
+              <div className="progress-step__label">AI Analysis</div>
+            </div>
+            <div className={`progress-step ${getProgressStepClass(4)}`}>
+              <div className="progress-step__icon">4</div>
+              <div className="progress-step__label">Interview Ready</div>
+            </div>
           </div>
           
           <div className="interview-setup__form">
@@ -442,12 +472,15 @@ const AIInterview = () => {
               </div>
               
               {resume ? (
-                <div className="resume-uploaded">
+                <div className="resume-uploaded glass-card">
                   <div className="resume-uploaded__details">
                     <span className="resume-uploaded__name">{resume.name}</span>
-                    <span className="resume-uploaded__size">{(resume.size / 1024).toFixed(1)} KB</span>
+                    <span className="resume-uploaded__size">{(resume.size / 1024).toFixed(1)} KB • {resume.type === 'application/pdf' ? 'PDF' : 'DOCX'}</span>
                   </div>
-                  <button className="btn btn-secondary" onClick={() => setResume(null)}>Change Resume</button>
+                  <div style={{ display: 'flex', gap: '$spacing-sm' }}>
+                    <button className="btn btn-secondary" onClick={() => setResume(null)}>Replace</button>
+                    <button className="btn btn-outline" onClick={() => setResume(null)}>Remove</button>
+                  </div>
                 </div>
               ) : (
                 <div className="resume-upload">
@@ -459,17 +492,57 @@ const AIInterview = () => {
                       onChange={handleResumeUpload}
                       style={{ display: "none" }}
                     />
-                    <div className="resume-upload__area"
+                    <div className="resume-upload__area gradient-border"
                          onDrop={handleDrop}
                          onDragOver={handleDragOver}>
                       <div className="resume-upload__icon">📁</div>
-                      <div className="resume-upload__title">Upload Resume</div>
-                      <div className="resume-upload__subtitle">Drag & drop your PDF/DOCX resume or click to browse</div>
+                      <div className="resume-upload__title">Drag & Drop Resume or Browse Files</div>
+                      <div className="resume-upload__subtitle">Upload your resume to analyze skills and experience</div>
                       <div className="resume-upload__format">PDF or DOCX (Max 5MB)</div>
                     </div>
                   </label>
                 </div>
               )}
+            </div>
+            
+            {/* AI Analysis Card */}
+            <div className="form-section">
+              <div className="form-section__header">
+                <span className="form-section__icon">🤖</span>
+                <h2>What AI Will Analyze</h2>
+              </div>
+              <div className="ai-analysis-card glass-card">
+                <div className="ai-analysis-card__items">
+                  <div className="ai-analysis-item">
+                    <span className="ai-analysis-item__icon">✓</span>
+                    <span>Resume Skills</span>
+                  </div>
+                  <div className="ai-analysis-item">
+                    <span className="ai-analysis-item__icon">✓</span>
+                    <span>Projects</span>
+                  </div>
+                  <div className="ai-analysis-item">
+                    <span className="ai-analysis-item__icon">✓</span>
+                    <span>Experience</span>
+                  </div>
+                  <div className="ai-analysis-item">
+                    <span className="ai-analysis-item__icon">✓</span>
+                    <span>Technologies</span>
+                  </div>
+                  <div className="ai-analysis-item">
+                    <span className="ai-analysis-item__icon">✓</span>
+                    <span>Job Description</span>
+                  </div>
+                  <div className="ai-analysis-item">
+                    <span className="ai-analysis-item__icon">✓</span>
+                    <span>ATS Keywords</span>
+                  </div>
+                  <div className="ai-analysis-item">
+                    <span className="ai-analysis-item__icon">✓</span>
+                    <span>Difficulty Level</span>
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* Job Description */}
@@ -480,13 +553,18 @@ const AIInterview = () => {
               </div>
               <div className="form-group">
                 <textarea
-                  className={`form-control ${errors.jobDescription ? 'error' : ''}`}
+                  className={`form-control textarea ${errors.jobDescription ? 'error' : ''}`}
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
-                  placeholder="Paste the complete job description here..."
-                  rows={8}
+                  placeholder="Paste the complete job description here to analyze requirements, skills, and keywords..."
+                  rows={10}
                 />
-                {errors.jobDescription && <div className="error-message">{errors.jobDescription}</div>}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  {errors.jobDescription && <div className="error-message">{errors.jobDescription}</div>}
+                  <div style={{ color: jobDescription.length > 2000 ? '#ef4444' : '$text-secondary', fontSize: '0.875rem' }}>
+                    {jobDescription.length}/2000 characters
+                  </div>
+                </div>
               </div>
             </div>
             
@@ -578,17 +656,11 @@ const AIInterview = () => {
             {/* Generate Button */}
             <div className="form-actions">
               <button
-                className="btn btn-primary generate-btn"
+                className={`btn btn-primary generate-btn ${isGenerating ? 'loading' : ''}`}
                 onClick={generateQuestions}
                 disabled={isGenerating}
               >
-                {isGenerating ? (
-                  <>
-                    <span className="spinner"></span> Generating Interview...
-                  </>
-                ) : (
-                  'Generate AI Interview Questions'
-                )}
+                {isGenerating ? 'Generating...' : 'Generate AI Interview'}
               </button>
             </div>
           </div>
