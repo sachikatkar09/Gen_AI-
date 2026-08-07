@@ -9,19 +9,23 @@ const AIInterview = () => {
   
   // Step 1: Setup State
   const [resume, setResume] = useState(null);
+  const [resumeText, setResumeText] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [jobRole, setJobRole] = useState('');
   const [experienceLevel, setExperienceLevel] = useState('');
   const [difficulty, setDifficulty] = useState('');
-  const [numQuestions, setNumQuestions] = useState(10);
+  const [interviewType, setInterviewType] = useState('');
+  const [numQuestions, setNumQuestions] = useState(20);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [selfIntroduction, setSelfIntroduction] = useState('');
+  const [isGeneratingSelfIntro, setIsGeneratingSelfIntro] = useState(false);
   const [errors, setErrors] = useState({});
-  
+   
   // Step 2: Interview State
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-  
+   
   // Step 3: Voice Answer State
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -29,7 +33,7 @@ const AIInterview = () => {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const recordingIntervalRef = useRef(null);
-  
+   
   // Step 4: AI Evaluation State
   const [scores, setScores] = useState({
     communication: 0,
@@ -42,7 +46,7 @@ const AIInterview = () => {
     improvements: [],
   });
   const [idealAnswer, setIdealAnswer] = useState('');
-  
+   
   // Step 5: Final Report State
   const [interviewCompleted, setInterviewCompleted] = useState(false);
   const [interviewSummary, setInterviewSummary] = useState({
@@ -67,30 +71,41 @@ const AIInterview = () => {
   // Validate required fields
   const validate = () => {
     const newErrors = {};
+    if (!resumeText.trim()) newErrors.resume = "Resume is required";
     if (!jobDescription.trim()) newErrors.jobDescription = "Job Description is required";
     if (!jobRole) newErrors.jobRole = "Job Role is required";
     if (!experienceLevel) newErrors.experienceLevel = "Experience Level is required";
     if (!difficulty) newErrors.difficulty = "Difficulty is required";
+    if (!interviewType) newErrors.interviewType = "Interview Type is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
   
-  // Handle resume upload
-  const handleResumeUpload = (e) => {
+  // Handle resume upload and extract text
+  const handleResumeUpload = async (e) => {
     const file = e.target.files?.[0];
     if (file && (file.type === 'application/pdf' || file.name.endsWith('.docx') || file.name.endsWith('.doc'))) {
       setResume(file);
+      await extractTextFromFile(file);
     } else {
       alert('Please upload a valid PDF or DOCX file.');
     }
   };
+
+  // Extract text from PDF or DOCX file
+  const extractTextFromFile = async (file) => {
+    // In a real app, use a library like pdf-parse or mammoth for DOCX
+    // For now, simulate extraction with a placeholder
+    setResumeText(`Extracted text from ${file.name}. This would contain the parsed resume content in a real application.`);
+  };
   
   // Handle drag and drop for resume
-  const handleDrop = (e) => {
+  const handleDrop = async (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file && (file.type === 'application/pdf' || file.name.endsWith('.docx') || file.name.endsWith('.doc'))) {
       setResume(file);
+      await extractTextFromFile(file);
     }
   };
   
@@ -106,20 +121,41 @@ const AIInterview = () => {
     setErrors({});
     
     try {
-      // Simulate AI processing
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await fetch('http://localhost:5000/api/ai/interview', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          resumeText,
+          jobDescription,
+          selfIntroduction,
+          difficulty,
+          interviewType
+        }),
+      });
       
-      // Generate mock questions based on the input
-      const mockQuestions = [];
-      for (let i = 1; i <= numQuestions; i++) {
-        mockQuestions.push({
-          id: i,
-          text: generateQuestionText(i),
-          type: getQuestionType(i)
-        });
+      if (!response.ok) {
+        throw new Error('Failed to generate questions');
       }
       
-      setQuestions(mockQuestions);
+      const data = await response.json();
+      
+      // Transform the structured questions into the expected format
+      const formattedQuestions = [];
+      let id = 1;
+      
+      Object.entries(data).forEach(([category, questions]) => {
+        questions.forEach(question => {
+          formattedQuestions.push({
+            id: id++,
+            text: question,
+            type: category
+          });
+        });
+      });
+      
+      setQuestions(formattedQuestions);
       setCurrentQuestionIndex(0);
       setProgress(0);
       setInterviewCompleted(false);
@@ -134,6 +170,39 @@ const AIInterview = () => {
       alert("Failed to generate interview questions. Please try again.");
     } finally {
       setIsGenerating(false);
+    }
+  };
+  
+  // Generate self-introduction
+  const generateSelfIntroduction = async () => {
+    if (!resumeText.trim()) {
+      alert('Please upload a resume first.');
+      return;
+    }
+    
+    setIsGeneratingSelfIntro(true);
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/ai/self-introduction', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ resumeText }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to generate self-introduction');
+      }
+      
+      const data = await response.json();
+      setSelfIntroduction(data.selfIntroduction);
+      
+    } catch (error) {
+      console.error("Error generating self-introduction:", error);
+      alert("Failed to generate self-introduction. Please try again.");
+    } finally {
+      setIsGeneratingSelfIntro(false);
     }
   };
   
@@ -464,46 +533,47 @@ const AIInterview = () => {
           </div>
           
           <div className="interview-setup__form">
-            {/* Resume Upload */}
-            <div className="form-section">
-              <div className="form-section__header">
-                <span className="form-section__icon">📄</span>
-                <h2>Resume</h2>
-              </div>
+             {/* Resume Upload */}
+             <div className="form-section">
+               <div className="form-section__header">
+                 <span className="form-section__icon">📄</span>
+                 <h2>Resume</h2>
+               </div>
               
-              {resume ? (
-                <div className="resume-uploaded glass-card">
-                  <div className="resume-uploaded__details">
-                    <span className="resume-uploaded__name">{resume.name}</span>
-                    <span className="resume-uploaded__size">{(resume.size / 1024).toFixed(1)} KB • {resume.type === 'application/pdf' ? 'PDF' : 'DOCX'}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '$spacing-sm' }}>
-                    <button className="btn btn-secondary" onClick={() => setResume(null)}>Replace</button>
-                    <button className="btn btn-outline" onClick={() => setResume(null)}>Remove</button>
-                  </div>
-                </div>
-              ) : (
-                <div className="resume-upload">
-                  <label htmlFor="resume-upload" className="resume-upload__label">
-                    <input
-                      id="resume-upload"
-                      type="file"
-                      accept=".pdf,.docx,.doc"
-                      onChange={handleResumeUpload}
-                      style={{ display: "none" }}
-                    />
-                    <div className="resume-upload__area gradient-border"
-                         onDrop={handleDrop}
-                         onDragOver={handleDragOver}>
-                      <div className="resume-upload__icon">📁</div>
-                      <div className="resume-upload__title">Drag & Drop Resume or Browse Files</div>
-                      <div className="resume-upload__subtitle">Upload your resume to analyze skills and experience</div>
-                      <div className="resume-upload__format">PDF or DOCX (Max 5MB)</div>
-                    </div>
-                  </label>
-                </div>
-              )}
-            </div>
+               {resume ? (
+                 <div className="resume-uploaded glass-card">
+                   <div className="resume-uploaded__details">
+                     <span className="resume-uploaded__name">{resume.name}</span>
+                     <span className="resume-uploaded__size">{(resume.size / 1024).toFixed(1)} KB • {resume.type === 'application/pdf' ? 'PDF' : 'DOCX'}</span>
+                   </div>
+                   <div style={{ display: 'flex', gap: '$spacing-sm' }}>
+                     <button className="btn btn-secondary" onClick={() => { setResume(null); setResumeText(''); }}>Replace</button>
+                     <button className="btn btn-outline" onClick={() => { setResume(null); setResumeText(''); }}>Remove</button>
+                   </div>
+                 </div>
+               ) : (
+                 <div className="resume-upload">
+                   <label htmlFor="resume-upload" className="resume-upload__label">
+                     <input
+                       id="resume-upload"
+                       type="file"
+                       accept=".pdf,.docx,.doc"
+                       onChange={handleResumeUpload}
+                       style={{ display: "none" }}
+                     />
+                     <div className="resume-upload__area gradient-border"
+                          onDrop={handleDrop}
+                          onDragOver={handleDragOver}>
+                       <div className="resume-upload__icon">📁</div>
+                       <div className="resume-upload__title">Drag & Drop Resume or Browse Files</div>
+                       <div className="resume-upload__subtitle">Upload your resume to analyze skills and experience</div>
+                       <div className="resume-upload__format">PDF or DOCX (Max 5MB)</div>
+                     </div>
+                   </label>
+                 </div>
+               )}
+               {errors.resume && <div className="error-message">{errors.resume}</div>}
+             </div>
             
             {/* AI Analysis Card */}
             <div className="form-section">
@@ -545,28 +615,52 @@ const AIInterview = () => {
               </div>
             </div>
             
-            {/* Job Description */}
-            <div className="form-section">
-              <div className="form-section__header">
-                <span className="form-section__icon">📝</span>
-                <h2>Job Description</h2>
-              </div>
-              <div className="form-group">
-                <textarea
-                  className={`form-control textarea ${errors.jobDescription ? 'error' : ''}`}
-                  value={jobDescription}
-                  onChange={(e) => setJobDescription(e.target.value)}
-                  placeholder="Paste the complete job description here to analyze requirements, skills, and keywords..."
-                  rows={10}
-                />
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  {errors.jobDescription && <div className="error-message">{errors.jobDescription}</div>}
-                  <div style={{ color: jobDescription.length > 2000 ? '#ef4444' : '$text-secondary', fontSize: '0.875rem' }}>
-                    {jobDescription.length}/2000 characters
-                  </div>
-                </div>
-              </div>
-            </div>
+             {/* Job Description */}
+             <div className="form-section">
+               <div className="form-section__header">
+                 <span className="form-section__icon">📝</span>
+                 <h2>Job Description</h2>
+               </div>
+               <div className="form-group">
+                 <textarea
+                   className={`form-control textarea ${errors.jobDescription ? 'error' : ''}`}
+                   value={jobDescription}
+                   onChange={(e) => setJobDescription(e.target.value)}
+                   placeholder="Paste the complete job description here to analyze requirements, skills, and keywords..."
+                   rows={10}
+                 />
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                   {errors.jobDescription && <div className="error-message">{errors.jobDescription}</div>}
+                   <div style={{ color: jobDescription.length > 2000 ? '#ef4444' : '$text-secondary', fontSize: '0.875rem' }}>
+                     {jobDescription.length}/2000 characters
+                   </div>
+                 </div>
+               </div>
+             </div>
+
+             {/* Self Introduction */}
+             <div className="form-section">
+               <div className="form-section__header">
+                 <span className="form-section__icon">🎤</span>
+                 <h2>Self Introduction</h2>
+               </div>
+               <div className="form-group">
+                 <textarea
+                   className="form-control textarea"
+                   value={selfIntroduction}
+                   onChange={(e) => setSelfIntroduction(e.target.value)}
+                   placeholder="Enter your self-introduction or generate one using AI..."
+                   rows={5}
+                 />
+                 <button
+                   className="btn btn-secondary generate-intro-btn"
+                   onClick={generateSelfIntroduction}
+                   disabled={isGeneratingSelfIntro}
+                 >
+                   {isGeneratingSelfIntro ? 'Generating...' : '✨ Generate Self Introduction'}
+                 </button>
+               </div>
+             </div>
             
             {/* Interview Settings */}
             <div className="form-section">
@@ -619,50 +713,53 @@ const AIInterview = () => {
                 </div>
               </div>
               
-              <div className="form-row">
-                {/* Difficulty */}
-                <div className="form-group">
-                  <label>Difficulty *</label>
-                  <select
-                    className={`form-control ${errors.difficulty ? 'error' : ''}`}
-                    value={difficulty}
-                    onChange={(e) => setDifficulty(e.target.value)}
-                  >
-                    <option value="">Select Difficulty</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                  </select>
-                  {errors.difficulty && <div className="error-message">{errors.difficulty}</div>}
-                </div>
-                
-                {/* Number of Questions */}
-                <div className="form-group">
-                  <label>Number of Questions</label>
-                  <select
-                    className="form-control"
-                    value={numQuestions}
-                    onChange={(e) => setNumQuestions(Number(e.target.value))}
-                  >
-                    <option value={5}>5 Questions</option>
-                    <option value={10}>10 Questions</option>
-                    <option value={15}>15 Questions</option>
-                    <option value={20}>20 Questions</option>
-                  </select>
-                </div>
-              </div>
+               <div className="form-row">
+                 {/* Difficulty */}
+                 <div className="form-group">
+                   <label>Difficulty *</label>
+                   <select
+                     className={`form-control ${errors.difficulty ? 'error' : ''}`}
+                     value={difficulty}
+                     onChange={(e) => setDifficulty(e.target.value)}
+                   >
+                     <option value="">Select Difficulty</option>
+                     <option value="easy">Easy</option>
+                     <option value="medium">Medium</option>
+                     <option value="hard">Hard</option>
+                   </select>
+                   {errors.difficulty && <div className="error-message">{errors.difficulty}</div>}
+                 </div>
+                 
+                 {/* Interview Type */}
+                 <div className="form-group">
+                   <label>Interview Type *</label>
+                   <select
+                     className={`form-control ${errors.interviewType ? 'error' : ''}`}
+                     value={interviewType}
+                     onChange={(e) => setInterviewType(e.target.value)}
+                   >
+                     <option value="">Select Interview Type</option>
+                     <option value="Technical">Technical</option>
+                     <option value="Behavioral">Behavioral</option>
+                     <option value="Full Stack">Full Stack</option>
+                     <option value="System Design">System Design</option>
+                     <option value="Coding">Coding</option>
+                   </select>
+                   {errors.interviewType && <div className="error-message">{errors.interviewType}</div>}
+                 </div>
+               </div>
             </div>
             
-            {/* Generate Button */}
-            <div className="form-actions">
-              <button
-                className={`btn btn-primary generate-btn ${isGenerating ? 'loading' : ''}`}
-                onClick={generateQuestions}
-                disabled={isGenerating}
-              >
-                {isGenerating ? 'Generating...' : 'Generate AI Interview'}
-              </button>
-            </div>
+               {/* Generate Button */}
+             <div className="form-actions">
+               <button
+                 className={`btn btn-primary generate-btn ${isGenerating ? 'loading' : ''}`}
+                 onClick={generateQuestions}
+                 disabled={isGenerating}
+               >
+                 {isGenerating ? 'Generating...' : 'Generate AI Interview Questions'}
+               </button>
+             </div>
           </div>
         </div>
       )}
@@ -680,61 +777,65 @@ const AIInterview = () => {
             </div>
           </div>
           
-          {/* Question Card */}
-          <div className="question-card">
-            <div className="question-text">
-              {questions[currentQuestionIndex]?.text || "Loading question..."}
-            </div>
-            
-            {/* Answer Section */}
-            <div className="answer-section">
-              <div className="answer-methods">
-                {!isRecording ? (
-                  <button className="btn btn-primary" onClick={startRecording}>
-                    <span>🎤</span> Start Speaking
-                  </button>
-                ) : (
-                  <button className="btn btn-danger" onClick={stopRecording}>
-                    <span>⏹️</span> Stop ({recordingTime}s)
-                  </button>
-                )}
-                <button className="btn btn-secondary" onClick={() => {}}>
-                  <span>⌨️</span> Type Answer
-                </button>
-              </div>
+               {/* Question Card */}
+           <div className="question-card">
+             <div className="question-header">
+               <span className="question-category">{questions[currentQuestionIndex]?.type}</span>
+               <span className="question-difficulty">{difficulty}</span>
+             </div>
+             <div className="question-text">
+               {questions[currentQuestionIndex]?.text || "Loading question..."}
+             </div>
               
-              {/* Transcript Display */}
-              {transcript && (
-                <div className="transcript-box">
-                  <h4>Your Answer:</h4>
-                  <div className="transcript-text">{transcript}</div>
-                </div>
-              )}
-            </div>
-            
-            {/* Navigation Buttons */}
-            <div className="interview-navigation">
-              {currentQuestionIndex > 0 && (
-                <button className="btn btn-secondary" onClick={previousQuestion}>
-                  Previous
-                </button>
-              )}
+             {/* Answer Section */}
+             <div className="answer-section">
+               <div className="answer-methods">
+                 {!isRecording ? (
+                   <button className="btn btn-primary" onClick={startRecording}>
+                     <span>🎤</span> Start Speaking
+                   </button>
+                 ) : (
+                   <button className="btn btn-danger" onClick={stopRecording}>
+                     <span>⏹️</span> Stop ({recordingTime}s)
+                   </button>
+                 )}
+                 <button className="btn btn-secondary" onClick={() => {}}>
+                   <span>⌨️</span> Type Answer
+                 </button>
+               </div>
+                
+               {/* Transcript Display */}
+               {transcript && (
+                 <div className="transcript-box">
+                   <h4>Your Answer:</h4>
+                   <div className="transcript-text">{transcript}</div>
+                 </div>
+               )}
+             </div>
               
-              {Object.keys(scores).length === 0 ? (
-                <button className="btn btn-primary" onClick={evaluateAnswer}>
-                  Evaluate Answer
-                </button>
-              ) : (
-                <button className="btn btn-primary" onClick={nextQuestion}>
-                  {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Finish Interview'}
-                </button>
-              )}
-              
-              <button className="btn btn-outline" onClick={skipQuestion}>
-                Skip
-              </button>
-            </div>
-          </div>
+             {/* Navigation Buttons */}
+             <div className="interview-navigation">
+               {currentQuestionIndex > 0 && (
+                 <button className="btn btn-secondary" onClick={previousQuestion}>
+                   Previous
+                 </button>
+               )}
+                
+               {Object.keys(scores).length === 0 ? (
+                 <button className="btn btn-primary" onClick={evaluateAnswer}>
+                   Evaluate Answer
+                 </button>
+               ) : (
+                 <button className="btn btn-primary" onClick={nextQuestion}>
+                   {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Finish Interview'}
+                 </button>
+               )}
+                
+               <button className="btn btn-outline" onClick={skipQuestion}>
+                 Skip
+               </button>
+             </div>
+           </div>
           
           {/* AI Evaluation - Shown after evaluation */}
           {Object.keys(scores).length > 0 && (
