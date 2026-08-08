@@ -540,38 +540,41 @@ const AIInterview = () => {
                  <h2>Resume</h2>
                </div>
               
-               {resume ? (
-                 <div className="resume-uploaded glass-card">
-                   <div className="resume-uploaded__details">
-                     <span className="resume-uploaded__name">{resume.name}</span>
-                     <span className="resume-uploaded__size">{(resume.size / 1024).toFixed(1)} KB • {resume.type === 'application/pdf' ? 'PDF' : 'DOCX'}</span>
-                   </div>
-                   <div style={{ display: 'flex', gap: '$spacing-sm' }}>
-                     <button className="btn btn-secondary" onClick={() => { setResume(null); setResumeText(''); }}>Replace</button>
-                     <button className="btn btn-outline" onClick={() => { setResume(null); setResumeText(''); }}>Remove</button>
-                   </div>
-                 </div>
-               ) : (
-                 <div className="resume-upload">
-                   <label htmlFor="resume-upload" className="resume-upload__label">
-                     <input
-                       id="resume-upload"
-                       type="file"
-                       accept=".pdf,.docx,.doc"
-                       onChange={handleResumeUpload}
-                       style={{ display: "none" }}
-                     />
-                     <div className="resume-upload__area gradient-border"
-                          onDrop={handleDrop}
-                          onDragOver={handleDragOver}>
-                       <div className="resume-upload__icon">📁</div>
-                       <div className="resume-upload__title">Drag & Drop Resume or Browse Files</div>
-                       <div className="resume-upload__subtitle">Upload your resume to analyze skills and experience</div>
-                       <div className="resume-upload__format">PDF or DOCX (Max 5MB)</div>
+                 {resume ? (
+                   <div className="resume-uploaded glass-card">
+                     <div className="resume-uploaded__details">
+                       <div style={{ display: 'flex', alignItems: 'center', gap: '$spacing-xs' }}>
+                         <span style={{ color: '$accent-pink' }}>✓</span>
+                         <span className="resume-uploaded__name">Resume uploaded</span>
+                       </div>
+                       <span className="resume-uploaded__size">{resume.name}</span>
                      </div>
-                   </label>
-                 </div>
-               )}
+                     <div style={{ display: 'flex', gap: '$spacing-sm' }}>
+                       <button className="btn btn-secondary" onClick={() => { setResume(null); setResumeText(''); }}>Replace</button>
+                       <button className="btn btn-outline" onClick={() => { setResume(null); setResumeText(''); }}>Remove</button>
+                     </div>
+                   </div>
+                 ) : (
+                   <div className="resume-upload">
+                     <label htmlFor="resume-upload" className="resume-upload__label">
+                       <input
+                         id="resume-upload"
+                         type="file"
+                         accept=".pdf,.docx,.doc"
+                         onChange={handleResumeUpload}
+                         style={{ display: "none" }}
+                       />
+                       <div className="resume-upload__area gradient-border compact"
+                            onDrop={handleDrop}
+                            onDragOver={handleDragOver}>
+                         <div className="resume-upload__icon">📁</div>
+                         <div className="resume-upload__title">Upload Resume</div>
+                         <div className="resume-upload__subtitle">Drag & drop your PDF/DOCX resume or click to browse</div>
+                         <div className="resume-upload__format">PDF or DOCX (Max 5MB)</div>
+                       </div>
+                     </label>
+                   </div>
+                 )}
                {errors.resume && <div className="error-message">{errors.resume}</div>}
              </div>
             

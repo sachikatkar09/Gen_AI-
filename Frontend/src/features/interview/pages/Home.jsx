@@ -155,9 +155,8 @@ Example:
                 </span>
                 {!resumeInputRef.current?.files[0] ? (
                   <>
-                    <p className="dropzone__title">Drag & Drop Resume</p>
-                    <p className="dropzone__subtitle">PDF or DOCX (Max 5MB)</p>
-                    <p className="dropzone__browse">or Browse Files</p>
+                    <p className="dropzone__title">Drag & drop your PDF/DOCX resume or click to browse</p>
+                    <p className="dropzone__subtitle">Max 5MB</p>
                   </>
                 ) : (
                   <div className="file-info">
@@ -168,7 +167,10 @@ Example:
                       <path d="M9 12v6" />
                       <path d="M15 12v6" />
                     </svg>
-                    <span className="file-name">{resumeInputRef.current.files[0].name}</span>
+                    <div className="file-details">
+                      <p className="file-status">✓ Resume uploaded</p>
+                      <span className="file-name">{resumeInputRef.current.files[0].name}</span>
+                    </div>
                     <div className="file-actions">
                       <button type="button" className="remove" onClick={(e) => {
                         e.preventDefault();

@@ -437,8 +437,9 @@ $glass-border: rgba(255, 255, 255, 0.1);
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 2.5rem 1.5rem;
+  gap: 0.75rem;
+  padding: 1.5rem 1.5rem;
+  height: 180px;
   background-color: $glass-bg;
   border: 2px dashed $glass-border;
   border-radius: 16px;
@@ -454,17 +455,17 @@ $glass-border: rgba(255, 255, 255, 0.1);
 
   &__icon {
     color: $accent;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
     opacity: 0.9;
 
     svg {
-      width: 40px;
-      height: 40px;
+      width: 32px;
+      height: 32px;
     }
   }
 
   &__title {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 600;
     color: $text-primary;
     margin: 0;
@@ -472,17 +473,17 @@ $glass-border: rgba(255, 255, 255, 0.1);
   }
 
   &__subtitle {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: rgba($text-muted, 0.7);
     margin: 0;
     text-align: center;
   }
 
   &__browse {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: $accent;
     font-weight: 500;
-    margin-top: 0.5rem;
+    margin-top: 0;
     text-decoration: underline;
     transition: opacity 0.3s ease;
 
@@ -511,9 +512,9 @@ $glass-border: rgba(255, 255, 255, 0.1);
   .file-info {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-top: 1rem;
-    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+    margin-top: 0;
+    padding: 0.5rem 0.75rem;
     background: rgba($success, 0.1);
     border-radius: 12px;
     width: 100%;
@@ -525,10 +526,25 @@ $glass-border: rgba(255, 255, 255, 0.1);
     height: 20px;
   }
 
-  .file-name {
-    font-size: 0.9rem;
-    color: $text-primary;
+  .file-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
     flex: 1;
+  }
+
+  .file-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $success;
+    margin: 0;
+  }
+
+  .file-name {
+    font-size: 0.8rem;
+    color: $text-primary;
+    margin: 0;
+    word-break: break-all;
   }
 
   .file-actions {
