@@ -23,15 +23,13 @@ export async function register({ username, email, password }) {
 
 export async function login({ email, password }) {
   try {
-    const response = await api.post("/api/auth/login", {
-      email,
-      password,
-    });
-
+    const response = await api.post("/api/auth/login", { email, password });
     return response.data;
   } catch (err) {
-    const message =
-      err?.response?.data?.message || err?.message || "Something went wrong";
+    if (err.code === "ERR_NETWORK") {
+      throw new Error("Unable to connect to the server. Please try again later.");
+    }
+    const message = err?.response?.data?.message || "Invalid email or password";
     throw new Error(message);
   }
 }
