@@ -220,6 +220,7 @@ body {
   &--highlight {
     color: $primary;
     font-weight: 600;
+    font-size: 1rem;
 
     &:hover {
       color: lighten($primary, 5%);
