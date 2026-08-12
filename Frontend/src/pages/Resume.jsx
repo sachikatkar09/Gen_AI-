@@ -531,165 +531,179 @@ const ATSResume = ({ data, isPrint = false }) => {
   const hasInterests = data.interests && data.interests.trim();
 
   // Font settings
-  const fontFamily = isPrint ? "'Times New Roman', Times, serif" : "'Georgia', 'Times New Roman', Times, serif";
-  const baseFontSize = isPrint ? '11pt' : '12px';
-  const lineHeight = isPrint ? '1.3' : '1.4';
+  const fontFamily = isPrint ? "'Inter', Arial, sans-serif" : "'Inter', Arial, sans-serif";
+  const baseFontSize = isPrint ? '11pt' : '14px';
+  const lineHeight = isPrint ? '1.4' : '1.5';
   
   return (
-    <div style={
-      isPrint ? {
-        fontFamily: fontFamily,
-        fontSize: baseFontSize,
-        lineHeight: lineHeight,
-        color: '#000000',
-        width: '100%',
-        maxWidth: '8.5in',
-        margin: '0 auto',
-        padding: '0.6in',
-        pageBreakAfter: 'avoid'
-      } : {
-        fontFamily: fontFamily,
-        fontSize: baseFontSize,
-        lineHeight: lineHeight,
-        color: '#000000',
-        width: '100%',
-        maxWidth: '816px', // A4 width in pixels at 96dpi
-        margin: '0 auto',
-        padding: '24px',
-        boxShadow: '0 0 20px rgba(0,0,0,0.1)',
-        background: 'white',
-        minHeight: '1122px' // A4 height in pixels at 96dpi
-      }
-    }>
+     <div style={
+       isPrint ? {
+         fontFamily: "'Inter', Arial, sans-serif",
+         fontSize: baseFontSize,
+         lineHeight: lineHeight,
+         color: '#000000',
+         width: '100%',
+         maxWidth: '8.5in',
+         margin: '0 auto',
+         padding: '0.6in',
+         pageBreakAfter: 'avoid'
+       } : {
+         fontFamily: "'Inter', Arial, sans-serif",
+         fontSize: baseFontSize,
+         lineHeight: lineHeight,
+         color: '#000000',
+         width: '100%',
+         maxWidth: '816px', // A4 width in pixels at 96dpi
+         margin: '0 auto',
+         padding: '24px',
+         boxShadow: '0 0 20px rgba(0,0,0,0.1)',
+         background: 'white',
+         minHeight: '1122px' // A4 height in pixels at 96dpi
+       }
+     }>
       {/* Header */}
       {data.personal.fullName && (
         <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-          <h1 style={
-            isPrint ? {
-              fontSize: '28pt',
-              fontWeight: 'bold',
-              margin: '0 0 4px 0',
-              lineHeight: '1.1'
-            } : {
-              fontSize: '28px',
-              fontWeight: 'bold',
-              margin: '0 0 6px 0',
-              lineHeight: '1.1'
-            }
-          }>
-            {data.personal.fullName}
-          </h1>
+           <h1 style={
+             isPrint ? {
+               fontSize: '24pt',
+               fontWeight: '700',
+               margin: '0 0 2px 0',
+               lineHeight: '1.2',
+               color: '#000000'
+             } : {
+               fontSize: '24px',
+               fontWeight: '700',
+               margin: '0 0 4px 0',
+               lineHeight: '1.2',
+               color: '#000000'
+             }
+           }>
+             {data.personal.fullName}
+           </h1>
         </div>
       )}
       
-      {formatContactInfo() && (
-        <div style={
-          isPrint ? {
-            textAlign: 'center',
-            fontSize: '10pt',
-            color: '#333333',
-            marginBottom: '16px',
-            borderBottom: '1px solid #dddddd',
-            paddingBottom: '8px'
-          } : {
-            textAlign: 'center',
-            fontSize: '12px',
-            color: '#333333',
-            marginBottom: '16px',
-            borderBottom: '1px solid #dddddd',
-            paddingBottom: '8px'
-          }
-        }>
-          {formatContactInfo()}
-        </div>
-      )}
+       {formatContactInfo() && (
+         <div style=
+           isPrint ? {
+             textAlign: 'center',
+             fontSize: '10pt',
+             color: '#555555',
+             marginBottom: '12px',
+             paddingBottom: '6px',
+             fontWeight: '400'
+           } : {
+             textAlign: 'center',
+             fontSize: '12px',
+             color: '#555555',
+             marginBottom: '14px',
+             paddingBottom: '8px',
+             fontWeight: '400'
+           }
+         >
+           {formatContactInfo()}
+         </div>
+       )}
       
       {/* Professional Summary */}
       {hasSummary && (
         <div style={{ marginBottom: '16px' }}>
-          <h2 style={
-            isPrint ? {
-              fontSize: '15pt',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 6px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '2px'
-            } : {
-              fontSize: '15px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 8px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '3px'
-            }
-          }>
-            Professional Summary
-          </h2>
-          <p style={{ margin: '0', whiteSpace: 'pre-line' }}>{data.summary}</p>
+           <h2 style={
+             isPrint ? {
+               fontSize: '14pt',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 8px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '4px'
+             } : {
+               fontSize: '14px',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 10px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '5px'
+             }
+           }>
+             Professional Summary
+           </h2>
+           <p style={{ margin: '0', fontSize: isPrint ? '10pt' : '12px', lineHeight: '1.6', whiteSpace: 'pre-line' }}>{data.summary}</p>
         </div>
       )}
       
-      {/* Technical Skills */}
-      {hasSkills && (
-        <div style={{ marginBottom: '16px' }}>
-          <h2 style={
-            isPrint ? {
-              fontSize: '15pt',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 6px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '2px'
-            } : {
-              fontSize: '15px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 8px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '3px'
-            }
-          }>
-            Technical Skills
-          </h2>
-          <p style={{ margin: '0' }}>{data.skills.join(', ')}</p>
-        </div>
-      )}
+       {/* Technical Skills */}
+       {hasSkills && (
+         <div style={{ marginBottom: '16px' }}>
+           <h2 style=
+             isPrint ? {
+               fontSize: '14pt',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 8px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '4px'
+             } : {
+               fontSize: '14px',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 10px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '5px'
+             }
+           >
+             Technical Skills
+           </h2>
+           <p style={{ margin: '0', fontSize: isPrint ? '10pt' : '12px', lineHeight: '1.6' }}>{data.skills.join(', ')}</p>
+         </div>
+       )}
       
       {/* Experience */}
       {hasExperience && (
         <div style={{ marginBottom: '16px' }}>
-          <h2 style={
-            isPrint ? {
-              fontSize: '15pt',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 6px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '2px'
-            } : {
-              fontSize: '15px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 8px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '3px'
-            }
-          }>
-            Experience
-          </h2>
+           <h2 style={
+             isPrint ? {
+               fontSize: '14pt',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 8px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '4px'
+             } : {
+               fontSize: '14px',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 10px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '5px'
+             }
+           }>
+             Experience
+           </h2>
           {data.experience.filter(e => e.company && e.company.trim()).map((exp, i) => (
             <div key={i} style={{ marginBottom: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ fontWeight: 'bold' }}>{exp.role}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span>{exp.company}</span>
-                <span>{exp.startDate}{exp.endDate ? ` - ${exp.endDate}` : ''}</span>
-              </div>
-              <div>
-                {formatDescription(exp.description)}
-              </div>
+               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                 <span style={{ fontWeight: '600', fontSize: isPrint ? '11pt' : '13px' }}>{exp.role}</span>
+                 <span style={{ fontSize: isPrint ? '10pt' : '12px', color: '#555555' }}>{exp.startDate}{exp.endDate ? ` - ${exp.endDate}` : ''}</span>
+               </div>
+               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                 <span style={{ fontSize: isPrint ? '10pt' : '12px', color: '#555555' }}>{exp.company}</span>
+               </div>
+               <div>
+                 {formatDescription(exp.description)}
+               </div>
             </div>
           ))}
         </div>
@@ -698,33 +712,45 @@ const ATSResume = ({ data, isPrint = false }) => {
       {/* Projects */}
       {hasProjects && (
         <div style={{ marginBottom: '16px' }}>
-          <h2 style={
-            isPrint ? {
-              fontSize: '15pt',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 6px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '2px'
-            } : {
-              fontSize: '15px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 8px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '3px'
-            }
-          }>
-            Projects
-          </h2>
+           <h2 style={
+             isPrint ? {
+               fontSize: '14pt',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 8px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '4px'
+             } : {
+               fontSize: '14px',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 10px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '5px'
+             }
+           }>
+             Projects
+           </h2>
           {data.projects.filter(p => p.name && p.name.trim()).map((proj, i) => (
-            <div key={i} style={{ marginBottom: '12px' }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>{proj.name}</div>
-              {proj.technologies && <div style={{ fontStyle: 'italic', marginBottom: '4px' }}>{proj.technologies}</div>}
-              <div>
-                {formatProjectFeatures(proj.description)}
-              </div>
-            </div>
+             <div key={i} style={{ marginBottom: '12px' }}>
+               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                 <span style={{ fontWeight: '600', fontSize: isPrint ? '11pt' : '13px' }}>{proj.name}</span>
+               </div>
+               {proj.technologies && <div style={{ marginBottom: '4px', fontSize: isPrint ? '10pt' : '12px', color: '#555555' }}>{proj.technologies}</div>}
+               <div>
+                 {proj.github && (
+                   <p style={{ margin: '0.2rem 0', fontSize: isPrint ? '10pt' : '12px', color: '#555555' }}>GitHub: {proj.github.replace(/^https?:\/\//, '')}</p>
+                 )}
+                 {proj.live && (
+                   <p style={{ margin: '0.2rem 0', fontSize: isPrint ? '10pt' : '12px', color: '#555555' }}>Live: {proj.live.replace(/^https?:\/\//, '')}</p>
+                 )}
+                 {formatProjectFeatures(proj.description)}
+               </div>
+             </div>
           ))}
         </div>
       )}
@@ -732,34 +758,38 @@ const ATSResume = ({ data, isPrint = false }) => {
       {/* Education */}
       {hasEducation && (
         <div style={{ marginBottom: '16px' }}>
-          <h2 style={
-            isPrint ? {
-              fontSize: '15pt',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 6px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '2px'
-            } : {
-              fontSize: '15px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 8px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '3px'
-            }
-          }>
-            Education
-          </h2>
+           <h2 style={
+             isPrint ? {
+               fontSize: '14pt',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 8px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '4px'
+             } : {
+               fontSize: '14px',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 10px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '5px'
+             }
+           }>
+             Education
+           </h2>
           {data.education.filter(e => e.college && e.college.trim()).map((edu, i) => (
-            <div key={i} style={{ marginBottom: '8px' }}>
-              <div style={{ fontWeight: 'bold' }}>{edu.degree}{edu.branch ? ` in ${edu.branch}` : ''}</div>
-              <div>{edu.college}</div>
-              <div>
-                {edu.startYear}{edu.endYear ? ` - ${edu.endYear}` : ''}
-                {edu.cgpa ? ` | CGPA: ${edu.cgpa}` : ''}
-              </div>
-            </div>
+             <div key={i} style={{ marginBottom: '12px' }}>
+               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                 <span style={{ fontWeight: '600', fontSize: isPrint ? '11pt' : '13px' }}>{edu.degree}{edu.branch ? ` in ${edu.branch}` : ''}</span>
+                 <span style={{ fontSize: isPrint ? '10pt' : '12px', color: '#555555' }}>{edu.startYear}{edu.endYear ? ` - ${edu.endYear}` : ''}</span>
+               </div>
+               <div style={{ fontSize: isPrint ? '10pt' : '12px', color: '#555555', marginBottom: '2px' }}>{edu.college}</div>
+               <div style={{ fontSize: isPrint ? '10pt' : '12px', color: '#555555' }}>CGPA: {edu.cgpa}</div>
+             </div>
           ))}
         </div>
       )}
@@ -767,114 +797,130 @@ const ATSResume = ({ data, isPrint = false }) => {
       {/* Certifications */}
       {hasCertifications && (
         <div style={{ marginBottom: '16px' }}>
-          <h2 style={
-            isPrint ? {
-              fontSize: '15pt',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 6px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '2px'
-            } : {
-              fontSize: '15px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 8px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '3px'
-            }
-          }>
-            Certifications
-          </h2>
-          {data.certifications.filter(c => c.name && c.name.trim()).map((cert, i) => (
-            <div key={i} style={{ marginBottom: '8px' }}>
-              <div style={{ fontWeight: 'bold' }}>{cert.name}</div>
-              {cert.organization && <div>{cert.organization}</div>}
-              {cert.year && <div>{cert.year}</div>}
-            </div>
-          ))}
+           <h2 style={
+             isPrint ? {
+               fontSize: '14pt',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 8px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '4px'
+             } : {
+               fontSize: '14px',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 10px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '5px'
+             }
+           }>
+             Certifications
+           </h2>
+           {data.certifications.filter(c => c.name && c.name.trim()).map((cert, i) => (
+             <div key={i} style={{ marginBottom: '12px' }}>
+               <div style={{ fontWeight: '600', fontSize: isPrint ? '11pt' : '13px', marginBottom: '2px' }}>{cert.name}</div>
+               <div style={{ fontSize: isPrint ? '10pt' : '12px', color: '#555555', marginBottom: '2px' }}>{cert.organization}</div>
+               <div style={{ fontSize: isPrint ? '10pt' : '12px', color: '#555555' }}>{cert.year}</div>
+             </div>
+           ))}
         </div>
       )}
       
       {/* Achievements */}
-      {hasAchievements && (
-        <div style={{ marginBottom: '16px' }}>
-          <h2 style={
-            isPrint ? {
-              fontSize: '15pt',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 6px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '2px'
-            } : {
-              fontSize: '15px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 8px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '3px'
-            }
-          }>
-            Achievements
-          </h2>
-          <ul style={{ margin: '0', paddingLeft: '20px' }}>
-            {data.achievements.filter(a => a && a.trim()).map((ach, i) => (
-              <li key={i} style={{ marginBottom: '4px' }}>{ach}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+           {hasAchievements && (
+         <div style={{ marginBottom: '16px' }}>
+           <h2 style=
+             isPrint ? {
+               fontSize: '14pt',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 8px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '4px'
+             } : {
+               fontSize: '14px',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 10px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '5px'
+             }
+           >
+             Achievements
+           </h2>
+           <ul style={{ margin: '0 0 0 16px', padding: 0 }}>
+             {data.achievements.filter(a => a && a.trim()).map((achievement, i) => (
+               <li key={i} style={{ marginBottom: '6px', fontSize: isPrint ? '10pt' : '12px', lineHeight: '1.5' }}>{achievement}</li>
+             ))}
+           </ul>
+         </div>
+       )}
       
       {/* Languages */}
       {hasLanguages && (
         <div style={{ marginBottom: '16px' }}>
-          <h2 style={
-            isPrint ? {
-              fontSize: '15pt',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 6px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '2px'
-            } : {
-              fontSize: '15px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 8px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '3px'
-            }
-          }>
-            Languages
-          </h2>
-          <p style={{ margin: '0' }}>{data.languages.filter(l => l && l.trim()).join(', ')}</p>
+           <h2 style={
+             isPrint ? {
+               fontSize: '14pt',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 8px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '4px'
+             } : {
+               fontSize: '14px',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 10px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '5px'
+             }
+           }>
+             Languages
+           </h2>
+           <p style={{ margin: '0', fontSize: isPrint ? '10pt' : '12px', lineHeight: '1.5' }}>{data.languages.filter(l => l && l.trim()).join(', ')}</p>
         </div>
       )}
       
       {/* Interests */}
       {hasInterests && (
         <div>
-          <h2 style={
-            isPrint ? {
-              fontSize: '15pt',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 6px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '2px'
-            } : {
-              fontSize: '15px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              margin: '0 0 8px 0',
-              borderBottom: '1px solid #000000',
-              paddingBottom: '3px'
-            }
-          }>
-            Interests
-          </h2>
-          <p style={{ margin: '0' }}>{data.interests}</p>
+           <h2 style={
+             isPrint ? {
+               fontSize: '14pt',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 8px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '4px'
+             } : {
+               fontSize: '14px',
+               fontWeight: '600',
+               textTransform: 'uppercase',
+               margin: '0 0 10px 0',
+               color: '#000000',
+               letterSpacing: '0.5px',
+               borderBottom: '1px solid #dddddd',
+               paddingBottom: '5px'
+             }
+           }>
+             Interests
+           </h2>
+           <p style={{ margin: '0', fontSize: isPrint ? '10pt' : '12px', lineHeight: '1.5' }}>{data.interests}</p>
         </div>
       )}
     </div>
