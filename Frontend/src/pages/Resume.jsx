@@ -584,27 +584,25 @@ const ATSResume = ({ data, isPrint = false }) => {
         </div>
       )}
       
-       {formatContactInfo() && (
-         <div style=
-           isPrint ? {
-             textAlign: 'center',
-             fontSize: '10pt',
-             color: '#555555',
-             marginBottom: '12px',
-             paddingBottom: '6px',
-             fontWeight: '400'
-           } : {
-             textAlign: 'center',
-             fontSize: '12px',
-             color: '#555555',
-             marginBottom: '14px',
-             paddingBottom: '8px',
-             fontWeight: '400'
-           }
-         >
-           {formatContactInfo()}
-         </div>
-       )}
+        {formatContactInfo() && (
+          <div style={isPrint ? {
+              textAlign: 'center',
+              fontSize: '10pt',
+              color: '#555555',
+              marginBottom: '12px',
+              paddingBottom: '6px',
+              fontWeight: '400'
+            } : {
+              textAlign: 'center',
+              fontSize: '12px',
+              color: '#555555',
+              marginBottom: '14px',
+              paddingBottom: '8px',
+              fontWeight: '400'
+            }}>
+            {formatContactInfo()}
+          </div>
+        )}
       
       {/* Professional Summary */}
       {hasSummary && (
@@ -637,29 +635,27 @@ const ATSResume = ({ data, isPrint = false }) => {
       )}
       
        {/* Technical Skills */}
-       {hasSkills && (
-         <div style={{ marginBottom: '16px' }}>
-           <h2 style=
-             isPrint ? {
-               fontSize: '14pt',
-               fontWeight: '600',
-               textTransform: 'uppercase',
-               margin: '0 0 8px 0',
-               color: '#000000',
-               letterSpacing: '0.5px',
-               borderBottom: '1px solid #dddddd',
-               paddingBottom: '4px'
-             } : {
-               fontSize: '14px',
-               fontWeight: '600',
-               textTransform: 'uppercase',
-               margin: '0 0 10px 0',
-               color: '#000000',
-               letterSpacing: '0.5px',
-               borderBottom: '1px solid #dddddd',
-               paddingBottom: '5px'
-             }
-           >
+        {hasSkills && (
+          <div style={{ marginBottom: '16px' }}>
+             <h2 style={isPrint ? {
+                 fontSize: '14pt',
+                 fontWeight: '600',
+                 textTransform: 'uppercase',
+                 margin: '0 0 8px 0',
+                 color: '#000000',
+                 letterSpacing: '0.5px',
+                 borderBottom: '1px solid #dddddd',
+                 paddingBottom: '4px'
+               } : {
+                fontSize: '14px',
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                margin: '0 0 10px 0',
+                color: '#000000',
+                letterSpacing: '0.5px',
+                borderBottom: '1px solid #dddddd',
+                paddingBottom: '5px'
+              }}>
              Technical Skills
            </h2>
            <p style={{ margin: '0', fontSize: isPrint ? '10pt' : '12px', lineHeight: '1.6' }}>{data.skills.join(', ')}</p>
@@ -831,38 +827,36 @@ const ATSResume = ({ data, isPrint = false }) => {
       )}
       
       {/* Achievements */}
-           {hasAchievements && (
-         <div style={{ marginBottom: '16px' }}>
-           <h2 style=
-             isPrint ? {
-               fontSize: '14pt',
-               fontWeight: '600',
-               textTransform: 'uppercase',
-               margin: '0 0 8px 0',
-               color: '#000000',
-               letterSpacing: '0.5px',
-               borderBottom: '1px solid #dddddd',
-               paddingBottom: '4px'
-             } : {
-               fontSize: '14px',
-               fontWeight: '600',
-               textTransform: 'uppercase',
-               margin: '0 0 10px 0',
-               color: '#000000',
-               letterSpacing: '0.5px',
-               borderBottom: '1px solid #dddddd',
-               paddingBottom: '5px'
-             }
-           >
-             Achievements
-           </h2>
-           <ul style={{ margin: '0 0 0 16px', padding: 0 }}>
-             {data.achievements.filter(a => a && a.trim()).map((achievement, i) => (
-               <li key={i} style={{ marginBottom: '6px', fontSize: isPrint ? '10pt' : '12px', lineHeight: '1.5' }}>{achievement}</li>
-             ))}
-           </ul>
-         </div>
-       )}
+            {hasAchievements && (
+              <div style={{ marginBottom: '16px' }}>
+                <h2 style={isPrint ? {
+                  fontSize: '14pt',
+                  fontWeight: '600',
+                  textTransform: 'uppercase',
+                  margin: '0 0 8px 0',
+                  color: '#000000',
+                  letterSpacing: '0.5px',
+                  borderBottom: '1px solid #dddddd',
+                  paddingBottom: '4px'
+                } : {
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  textTransform: 'uppercase',
+                  margin: '0 0 10px 0',
+                  color: '#000000',
+                  letterSpacing: '0.5px',
+                  borderBottom: '1px solid #dddddd',
+                  paddingBottom: '5px'
+                }}>
+                  Achievements
+                </h2>
+                <ul style={{ margin: '0 0 0 16px', padding: 0 }}>
+                  {data.achievements.filter(a => a && a.trim()).map((achievement, i) => (
+                    <li key={i} style={{ marginBottom: '6px', fontSize: isPrint ? '10pt' : '12px', lineHeight: '1.5' }}>{achievement}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
       
       {/* Languages */}
       {hasLanguages && (
