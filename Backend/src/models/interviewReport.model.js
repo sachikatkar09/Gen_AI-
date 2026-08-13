@@ -1,5 +1,21 @@
 const mongoose = require("mongoose");
 
+const evaluationSchema = new mongoose.Schema(
+  {
+    score: {
+      type: Number,
+      min: 0,
+      max: 100,
+    },
+    strengths: [String],
+    weaknesses: [String],
+    suggestions: [String],
+  },
+  {
+    _id: false,
+  }
+);
+
 const technicalQuestionSchema = new mongoose.Schema(
   {
     question: {
@@ -14,6 +30,7 @@ const technicalQuestionSchema = new mongoose.Schema(
       type: String,
       required: [true, "Answer is required"],
     },
+    evaluation: evaluationSchema,
   },
   {
     _id: false,
@@ -24,7 +41,7 @@ const behavioralQuestionSchema = new mongoose.Schema(
   {
     question: {
       type: String,
-      required: [true, "Technical question is required"],
+      required: [true, "Behavioral question is required"],
     },
     intention: {
       type: String,
@@ -34,6 +51,7 @@ const behavioralQuestionSchema = new mongoose.Schema(
       type: String,
       required: [true, "Answer is required"],
     },
+    evaluation: evaluationSchema,
   },
   {
     _id: false,
@@ -74,6 +92,22 @@ const preparationPlanSchema = new mongoose.Schema({
   ],
 });
 
+const finalReportSchema = new mongoose.Schema(
+  {
+    score: {
+      type: Number,
+      min: 0,
+      max: 100,
+    },
+    analysis: String,
+    skillGaps: [String],
+    prepPlan: String,
+  },
+  {
+    _id: false,
+  }
+);
+
 const interviewReportSchema = new mongoose.Schema(
   {
     jobDescription: {
@@ -86,6 +120,9 @@ const interviewReportSchema = new mongoose.Schema(
     selfDescription: {
       type: String,
     },
+    introduction: {
+      type: String,
+    },
     matchScore: {
       type: Number,
       min: 0,
@@ -95,6 +132,7 @@ const interviewReportSchema = new mongoose.Schema(
     behavioralQuestions: [behavioralQuestionSchema],
     skillGaps: [skillGapSchema],
     preparationPlan: [preparationPlanSchema],
+    finalReport: finalReportSchema,
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
